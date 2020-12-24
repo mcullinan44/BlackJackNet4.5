@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Blackjack.Core;
 
@@ -24,10 +18,6 @@ namespace BlackJackWinform
             this.pictureBoxList = new List<PictureBox>();
             this.Controller = controller;
             this.BlackJackForm = blackjackForm;
-
-
-
-
         }
 
         public void AddCard(Card card, bool isFaceUp)

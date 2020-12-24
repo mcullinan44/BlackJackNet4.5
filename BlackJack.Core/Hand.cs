@@ -14,25 +14,17 @@ namespace Blackjack.Core
         public event GameEvents.OnBlackjack onBlackjack;
         public event GameEvents.OnBust onBust;
 
-        private readonly List<Card> cardList;
-        private Bet currentBet;
-       // public readonly IPlayer player;
-        private Result result;
-
         public Hand(GameController controller)
         {
-            cardList = new List<Card>();
-
-
-            result = new Result();
+            Cards = new List<Card>();
+            Result = new Result();
         }
 
         public void ReceiveCard(Card card, bool isDeal)
         {
-            cardList.Add(card);
+            Cards.Add(card);
             var args = new OnCardReceivedEventArgs(this, card);
-            if(onCardReceived != null)
-                 onCardReceived(this, args);
+            onCardReceived?.Invoke(this, args);
             var score = this.CurrentScore;
             if (score == 21 && isDeal)
             {
@@ -45,9 +37,8 @@ namespace Blackjack.Core
             {
                 IsBust = true;
                 IsFinalized = true;
-                
-                if(onBust != null)
-                    onBust(this, args);
+
+                onBust?.Invoke(this, args);
             }
         }
 
@@ -57,20 +48,13 @@ namespace Blackjack.Core
 
         public bool IsBust { get; set; }
 
-        public List<Card> Cards
-        {
+        public List<Card> Cards { get; }
 
-            get
-            {
-                return cardList;
-            }
-        }
-        
-       public int CardCount
+        public int CardCount
         {
             get
             {
-                return cardList.Count;
+                return Cards.Count;
             }
         }
 
@@ -79,14 +63,14 @@ namespace Blackjack.Core
            get
            {
                int runningTotal = 0;
-               cardList.ForEach((i) =>
+               Cards.ForEach((i) =>
                {
                    runningTotal += i.Value;
                });
 
                if(runningTotal > 21)
                {
-                   foreach (var c in cardList)
+                   foreach (var c in Cards)
                    {
                        if (c.CardType == CardType.Ace)
                        {
@@ -108,11 +92,6 @@ namespace Blackjack.Core
            set; 
        }
 
-        public Result Result
-       {
-
-           get { return result; }
-           set { result = value; }
-       }
+        public Result Result { get; set; }
     }
 }
