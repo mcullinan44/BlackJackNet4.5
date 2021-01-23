@@ -8,74 +8,99 @@ namespace Blackjack.Core
 {
     public class PlayerHand : Hand
     {
-        public event GameEvents.OnPushHand onPushHand;
+
+        public event GameEvents.OnCardReceived onCardReceived;
+        public event GameEvents.OnCardRemoved onCardRemoved;
         public event GameEvents.OnWinHand onWinHand;
         public event GameEvents.OnLoseHand onLoseHand;
-        private Bet currentBet;
+        public event GameEvents.OnPushHand onPushHand;
+        public event GameEvents.OnBlackjack onBlackjack;
+        public event GameEvents.OnBust onBust;
+
+        
+
 
         public PlayerHand(Player player, GameController gameController)
             : base(gameController)
-        {
-            this.onBlackjack += PlayerHand_onBlackjack;
-            this.onBust += PlayerHand_onBust;
+        {            
             this.controller = gameController;
-            currentBet = new Bet(this, controller);
+            this.Player = player;
+
+            CurrentBet = new Bet(this);
+
+
         }
 
-        void PlayerHand_onBust(object sender, OnCardReceivedEventArgs args)
+        public void Win()
         {
-            base.Result = Result.Bust;
-            controller.ActivateNextHand();
+            this.Result = Result.Win;
+            onWinHand?.Invoke(this);
         }
 
-        void PlayerHand_onBlackjack(object sender, OnCardReceivedEventArgs args)
+        public void Lost()
         {
-            //this.CurrentBet.Amount = this.CurrentBet.Amount * 1.5;
-            controller.PlayerbankRoll += this.CurrentBet.Amount * 2.5;
-            if (!controller.Dealer.ActiveHand.IsBlackjack)
-                base.Result = Result.Blackjack;
-
-            args.Hand.IsFinalized = true;
-            controller.ActivateNextHand();
+            this.Result = Result.Lost;
+            onLoseHand?.Invoke(this);
         }
 
-        public void PushHand()
+        public void Push()
         {
-            controller.PlayerbankRoll += this.CurrentBet.Amount;
-            base.Result = Result.Push;
-            onPushHand(this);
+            this.Result = Result.Push;
+            onPushHand?.Invoke(this);
         }
 
-        public void WinHand()
+        public void Blackjack()
         {
-            controller.PlayerbankRoll += this.CurrentBet.Amount * 2;
-            base.Result = Result.Win;
-            onWinHand(this);
+            this.Result = Result.Blackjack;
+            var args = new OnCardReceivedEventArgs(this, null);
+            onBlackjack?.Invoke(this, args);
         }
 
-        public Bet CurrentBet
+        public Player Player { get; set; }
+
+        public Bet CurrentBet { get; set; }
+
+        public void AddCard(Card card)
         {
-            get
+            this.Cards.Add(card);
+            var args = new OnCardReceivedEventArgs(this, card);
+            onCardReceived?.Invoke(this, args);
+        }
+
+        public Card RemoveCard(int index)
+        {
+            var result = this.Cards[index];
+            this.Cards.Remove(result);
+            var args = new OnCardReceivedEventArgs(this, result);
+            onCardReceived?.Invoke(this, args);
+
+
+            return result;
+        }
+
+
+        public override bool CheckIsBust()
+        {
+
+            if (CurrentScore > 21)
             {
-                return currentBet;
+                this.Result = Result.Bust;
+                var args = new OnCardReceivedEventArgs(this, null);
+                onBust?.Invoke(this, args);
+                return true;
             }
-            set
+            else
             {
-                currentBet = value;
+                return false;
             }
+
         }
 
-        public void LoseHand()
+
+        public bool IsActive
         {
-            base.Result = Result.Lost;
-            try
-            {
-                onLoseHand(this);
-            }
-            catch(Exception ex)
-            {
-
-            }
+            get { return this.State == State.Playing; }
         }
+
     }
 }

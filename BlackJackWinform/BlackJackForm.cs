@@ -27,27 +27,35 @@ namespace BlackJackWinform
         public BlackJackForm()
         {
             InitializeComponent();
-            this.controller = new GameController();
-            controller.onBankrollchange += Instance_OnBankrollChange;
+            this.controller = new GameController(6, 10);
+
+
+            controller.onBankrollChange += Instance_OnBankrollChange;
             controller.onShowAllCards += Instance_OnShowAllCards;
             controller.onGameEnd += controller_onGameEnd;
             controller.MinimumBet = Defaults.MinimumBet;
             controller.NumberOfDecks = Defaults.NumberOfDecks;
-            controller.PlayerbankRoll = Defaults.Bankroll;
-            controller.StartNewSession(6, 10);
+
+
+            controller.AddPlayer("matt", Defaults.Bankroll);
             controller.ShuffleAll();
+
+
             var collection = new ShoeRemainingCollection(controller);
             collection.ShoeRemainingBindingList.ListChanged += ShoeRemainingBindingList_ListChanged;
             tbBet.Text = controller.MinimumBet.ToString("c0");
+            lblBankroll.Text = controller.PlayerList[0].PlayerbankRoll.ToString("c0");
+
+
             this.shoeRemainingBindingSource = new BindingSource();
             this.shoeRemainingBindingSource.DataSource = collection.ShoeRemainingBindingList;
-            this.dgvShoeRemaining.DataSource = this.shoeRemainingBindingSource;
+           // this.dgvShoeRemaining.DataSource = this.shoeRemainingBindingSource;
 
             var countStrategyCollection = new CardCountingMethodCollection(controller);
             this.cardCountingStrategyBindingSource = new BindingSource();
             this.cardCountingStrategyBindingSource.DataSource = countStrategyCollection.CardCountingStrategyBindingList;
-            this.dgvCountingScenarios.DataSource = this.cardCountingStrategyBindingSource;
-            pnlAction.Visible = false;
+            //this.dgvCountingScenarios.DataSource = this.cardCountingStrategyBindingSource;
+            //pnlAction.Visible = false;
         }
 
         void ShoeRemainingBindingList_ListChanged(object sender, ListChangedEventArgs e)
@@ -57,50 +65,31 @@ namespace BlackJackWinform
 
         }
 
-
         #region User Events
 
         private void btnHit_Click(object sender, EventArgs e)
         {
-            controller.Hit();
+            controller.Hit(controller.ActivePlayer.ActiveHand);
         }
 
         private void btnStand_Click(object sender, EventArgs e)
         {
-            playerHandControlList.Find(i => i.Hand == controller.PlayerOne.ActiveHand).IsActive = false;
-            controller.Stand();
-            var hand = controller.ActivateNextHand();
-
-            var newHand = playerHandControlList.Find(i => i.Hand == hand);
-            if (newHand != null)
-            {
-                newHand.IsActive = true;
-            }
+           
         }
 
-        private void btnSplit_Click(object sender, EventArgs e)
+
+        private PlayerHandControl ActivePlayerHandControl
         {
-            var newhand = (PlayerHand)controller.CreateNewHandForSplit();
-            var newHandControl = new PlayerHandControl(newhand, int.Parse(tbBet.Text), controller, this);
-            newHandControl.IsActive = true;
-            playerHandControlList.Add(newHandControl);
-            layout.Controls.Add(newHandControl);
-            var splittingHandControl = playerHandControlList.Find(i => i.Hand == controller.PlayerOne.ActiveHand);
-            controller.PlayerOne.ActiveHand.IsActive = false;
-            newhand.IsActive = true;
-            splittingHandControl.Split(newhand);
+            get
+            {
+                return playerHandControlList.Find(i => i.PlayerHand == controller.ActivePlayer.ActiveHand);
+            }
+
         }
 
         private void btnDoubleDown_Click(object sender, EventArgs e)
         {
-            playerHandControlList.Find(i => i.Hand == controller.PlayerOne.ActiveHand).IsActive = false;
-            controller.DoubleDown();
-            var hand = controller.ActivateNextHand();
-            var newHand = playerHandControlList.Find(i => i.Hand == hand);
-            if(newHand != null)
-            {
-                newHand.IsActive = true;
-            }
+
         }
 
         private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -113,65 +102,131 @@ namespace BlackJackWinform
         {
             Console.WriteLine("--------------------------------------");
             btnBet.Enabled = false;
-            btnHit.Enabled = true;
-            btnStand.Enabled = true;
-            btnDoubleDown.Enabled = true;
+     
             if (controller.Shoe.UndealtCards.Count < 10)
                 controller.ShuffleAll();
+
             controller.StartNewHand();
-            controller.Dealer.ActiveHand.onBust += controller_onGameEnd;
-            controller.Dealer.ActiveHand.onBust += Instance_OnShowAllCards;
-            controller.Dealer.ActiveHand.onBlackjack += controller_onGameEnd;
-            controller.Dealer.ActiveHand.onBlackjack += Instance_OnShowAllCards;
-            controller.onActiveHandChanged +=controller_OnActiveHandChanged;
+
+
+
             dealerLayoutPanel.Controls.Clear();
-            dealerHandControl = new DealerHandControl(controller.Dealer.ActiveHand, controller, this);
+            dealerHandControl = new DealerHandControl(controller.Dealer.Hand, controller, this);
+
+
+            controller.Dealer.Hand.onDealerBlackjack += controller_onGameEnd;
+            controller.Dealer.Hand.onDealerBlackjack += Instance_OnShowAllCards;
+            controller.Dealer.Hand.onDealerBust += controller_onGameEnd;
+            controller.Dealer.Hand.onDealerBust += Instance_OnShowAllCards;
+
+
             dealerLayoutPanel.Controls.Add(dealerHandControl);
             foreach(var control in playerHandControlList)
             {
                 control.EndGame();
             }
             layout.Controls.Clear();
-            var playerHandControl = new PlayerHandControl(controller.PlayerOne.ActiveHand, int.Parse(tbBet.Text), controller,this);
+
+
+            controller.IncreaseBet(controller.PlayerList[0].ActiveHand.CurrentBet, double.Parse(tbBet.Text));
+
+            var playerHandControl = new PlayerHandControl(controller.ActivePlayer.ActiveHand, controller,this);
+
+
+
             playerHandControlList.Add(playerHandControl);
             layout.Controls.Add(playerHandControl);
+            playerHandControl.btnDoubleDown.Enabled = true;
+            playerHandControl.btnHit.Enabled = true;
+            playerHandControl.btnStand.Enabled = true;
+            
             controller.Deal();
    
-            pnlAction.Visible = true;
+           // pnlAction.Visible = true;
         }
+
+        private void Hand_onDealerBlackjack(object sender, OnCardReceivedEventArgs args)
+        {
+            
+        }
+
+        public void SplitHand(PlayerHandControl sourceHandControl)
+        {
+
+            //take a card from the source hand
+            Card cardToMoveToNewHand = sourceHandControl.TakeLastCard();
+
+
+            //create a new hand for the active player
+            PlayerHand newHand = controller.AddHandToPlayer(controller.ActivePlayer, State.NotYetPlayed);
+            newHand.State = State.NotYetPlayed;
+            //add the card that was removed from the source to the new hand
+            var newPlayerHandControl = new PlayerHandControl(newHand, controller, this);
+
+            controller.GivePlayerACard(newHand, cardToMoveToNewHand);
+
+            newPlayerHandControl.Visible = true;
+            playerHandControlList.Add(newPlayerHandControl);
+            layout.Controls.Add(newPlayerHandControl);
+
+            controller.IncreaseBet(newHand.CurrentBet, double.Parse(tbBet.Text));
+            
+            newPlayerHandControl.btnDoubleDown.Enabled = false;
+            newPlayerHandControl.btnHit.Enabled = false;
+            newPlayerHandControl.btnStand.Enabled = false;
+            newPlayerHandControl.btnSplit.Enabled = false;
+
+     
+
+
+
+
+            //deal a new card to the old hand
+            //controller.GivePlayerACard(sourceHandControl.Hand);
+
+            //PlayerHand ph = new PlayerHand(controller.ActivePlayer, controller);
+            //controller.ActivePlayer.CurrentHands.Add(ph);
+
+
+
+
+
+        }
+
+
 
         void ActiveHand_onBust(object sender, OnCardReceivedEventArgs args)
         {
-            var newHand = playerHandControlList.Find(i => i.Hand == controller.PlayerOne.ActiveHand);
+            var newHand = playerHandControlList.Find(i => i.PlayerHand == controller.ActivePlayer.ActiveHand);
             if (newHand != null)
             {
                 newHand.IsActive = true;
             }
         }
 
-        void controller_OnActiveHandChanged(object sender, EventArgs e)
-        {
-            if (controller.PlayerOne.ActiveHand.Cards.Count == 2)
-            {
-                if (controller.PlayerOne.ActiveHand.Cards[0].CardType == controller.PlayerOne.ActiveHand.Cards[1].CardType
-                    && controller.PlayerOne.ActiveHand.Cards[0].Value == controller.PlayerOne.ActiveHand.Cards[1].Value)
-                {
-                    btnSplit.Enabled = true;
-                }
+        //void controller_OnActiveHandChanged(object sender, EventArgs e)
+        //{
+        //    if (controller.ActivePlayer.ActiveHand.Cards.Count == 2)
+        //    {
+        //        if (controller.ActivePlayer.ActiveHand.Cards[0].CardType == controller.ActivePlayer.ActiveHand.Cards[1].CardType
+        //            && controller.ActivePlayer.ActiveHand.Cards[0].Value == controller.ActivePlayer.ActiveHand.Cards[1].Value)
+        //        {
+        //            btnSplit.Enabled = true;
+        //        }
 
-                btnDoubleDown.Enabled = true;
-                btnSplit.Enabled = false;
-            }
-            else
-            {
-                btnDoubleDown.Enabled = false;
-                btnSplit.Enabled = false;
-            }
-            var activeHand = (PlayerHand)controller.PlayerOne.ActiveHand;
-            btnDoubleDown.Enabled = true;
-            var activeControl = playerHandControlList.Find(i => i.Hand.IsActive);
-            activeControl.IsActive = true;
-        }
+        //        btnDoubleDown.Enabled = true;
+        //        btnSplit.Enabled = false;
+        //    }
+        //    else
+        //    {
+        //        btnDoubleDown.Enabled = false;
+        //        btnSplit.Enabled = false;
+        //    }
+        //    var activeHand = (PlayerHand)controller.ActivePlayer.ActiveHand;
+        //    btnDoubleDown.Enabled = true;
+        //    var activeControl = playerHandControlList.Find(i => i.Hand.IsActive);
+        //    activeControl.IsActive = true;
+        //}
 
         #endregion
 
@@ -182,11 +237,8 @@ namespace BlackJackWinform
             tbBet.Enabled = true;
             btnBet.Enabled = true;
             btnBet.Visible = true;
-            btnDoubleDown.Enabled = false;
-            btnHit.Enabled = false;
-            btnStand.Enabled = false;
-            btnSplit.Enabled = false;
-            pnlAction.Visible = false;
+
+
         }
 
 
@@ -195,9 +247,9 @@ namespace BlackJackWinform
             dealerHandControl.ShowAllCards();
         }
 
-        void Instance_OnBankrollChange(object sender, EventArgs e)
+        void Instance_OnBankrollChange(object sender, OnBankrollChangedEventArgs e)
         {
-            lblBankroll.Text = controller.PlayerbankRoll.ToString("c0");
+            lblBankroll.Text = e.Player.PlayerbankRoll.ToString("c0");
         }
 
         #endregion

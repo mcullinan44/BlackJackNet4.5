@@ -8,8 +8,6 @@ namespace Blackjack.Core
 {
     public sealed class Dealer
     {
-        private DealerHand dealerHand;
-
         public string Name { get; set; }
 
         public Dealer() {
@@ -17,14 +15,7 @@ namespace Blackjack.Core
    
         }
 
-        public DealerHand ActiveHand
-        {
-            get
-            {
-                return this.dealerHand;
-            }
-            set { this.dealerHand = value; }
-        }
+        public DealerHand Hand { get; set; }
 
         public int Position
         {

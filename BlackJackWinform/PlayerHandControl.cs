@@ -13,43 +13,78 @@ namespace BlackJackWinform
 {
     public partial class PlayerHandControl : HandControl
     {
-        public readonly PlayerHand Hand;
+        public readonly PlayerHand PlayerHand;
         
-        public PlayerHandControl(PlayerHand hand, int bet, GameController controller, BlackJackForm blackjackForm)
-            : base(hand,controller,blackjackForm)
+        public PlayerHandControl(PlayerHand playerHand, GameController controller, BlackJackForm blackjackForm)
+            : base(playerHand, controller,blackjackForm)
         {
             InitializeComponent();
-            this.Hand = hand;
-            hand.CurrentBet.onBetChanged += CurrentBet_onBetChanged;
-            hand.onCardReceived +=hand_onCardReceived;
+            this.PlayerHand = playerHand;
+            
             lblBet.Visible = true;
-            lblBet.Text = bet.ToString("c0");
-            hand.CurrentBet.Amount = bet;
-            hand.onBust += hand_onBust;
-            hand.onBlackjack += hand_onBlackjack;
-            hand.onWinHand += hand_onWinHand;
-            hand.onLoseHand += hand_onLoseHand;
-            hand.onPushHand += hand_onPushHand;
-            this.IsActive = true;
+            lblBet.Text = playerHand.CurrentBet.Amount.ToString("c0");
+
+            controller.onBetChanged += Controller_onBetChanged;
+
+
+
+
+            playerHand.onCardReceived += hand_onCardReceived;
+
+
+            playerHand.onBust += hand_onBust;
+            playerHand.onBlackjack += hand_onBlackjack;
+            playerHand.onWinHand += hand_onWinHand;
+            playerHand.onLoseHand += hand_onLoseHand;
+            playerHand.onPushHand += hand_onPushHand;
+
+
+
+            controller.onGameEnd += Controller_onGameEnd;
+
+
+            this.IsActive = playerHand.IsActive;
         }
 
-        public void Split(PlayerHand newHand)
+
+        private void Controller_onGameEnd(object sender, EventArgs e)
+        {
+            btnDoubleDown.Enabled = false;
+            btnHit.Enabled = false;
+            btnStand.Enabled = false;
+            btnSplit.Enabled = false;
+        }
+
+        private void Controller_onBetChanged(object sender, OnBetChangedEventArgs args)
+        {
+            lblBet.Text = args.Bet.Amount.ToString("c0");
+        }
+
+        public Card TakeLastCard()
         {
             this.IsActive = false;
+
+            //get the last card from this hand
+            var result = this.PlayerHand.Cards[1];
+
+
+            this.PlayerHand.Cards.Remove(result);
+
+         
             //Take card from old hand
-            newHand.ReceiveCard(this.Hand.Cards[1], true);
-            this.pictureBoxList.Remove(pictureBoxList.Find(i => i.Tag == this.Hand.Cards[1]));
-            this.Hand.Cards.RemoveAt(1);
+            //newHand.ReceiveCard(this.Hand.Cards[1], true);
+            
+            this.pictureBoxList.Remove(pictureBoxList.Find(i => i.Tag == result));
+            
             pnlHand.Controls.RemoveAt(0);
-            //"Old" hand gets new card
-            this.Hand.ReceiveCard(Controller.Shoe.NextCard, true);
-            //New hand gets second card
-            newHand.ReceiveCard(Controller.Shoe.NextCard, true);
+
+
+            return result;
         }
 
         void hand_onBlackjack(object sender, OnCardReceivedEventArgs args)
         {
-            lblWinning.Text = "+ " + this.Hand.CurrentBet.Amount.ToString("c0");
+            lblWinning.Text = "+ " + this.PlayerHand.CurrentBet.Amount.ToString("c0");
             lblWinning.Visible = lblOutcome.Visible = true;
             lblOutcome.Text = "Blackjack!";
             this.IsActive = false;
@@ -95,19 +130,14 @@ namespace BlackJackWinform
                 if (args.Hand.Cards[0].CardType == args.Hand.Cards[1].CardType
                     && args.Hand.Cards[0].Value == args.Hand.Cards[1].Value)
                 {
-                    this.BlackJackForm.btnSplit.Enabled = true;
+                    this.btnSplit.Enabled = true;
                 }
-                this.BlackJackForm.btnDoubleDown.Enabled = true;
+                this.btnDoubleDown.Enabled = true;
             }
             else
             {
-                this.BlackJackForm.btnDoubleDown.Enabled = this.BlackJackForm.btnSplit.Enabled = false;
+                this.btnDoubleDown.Enabled = this.btnSplit.Enabled = true;
             }
-        }
-
-        void CurrentBet_onBetChanged(object sender, OnBetChangedEventArgs args)
-        {
-            lblBet.Text = args.NewBet.Amount.ToString("c0");
         }
 
         public bool IsActive
@@ -115,6 +145,12 @@ namespace BlackJackWinform
             get { return this.lblActive.Visible; }
             set
             {
+                if(value)
+                {
+                    this.BorderStyle = BorderStyle.FixedSingle;
+                    this.pnlHand.BackColor = Color.Yellow;
+                }
+                
                 this.lblActive.Visible = value;
             }
         }

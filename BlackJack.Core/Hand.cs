@@ -10,43 +10,17 @@ namespace Blackjack.Core
     {
         protected GameController controller;
 
-        public event GameEvents.OnCardReceived onCardReceived;
-        public event GameEvents.OnBlackjack onBlackjack;
-        public event GameEvents.OnBust onBust;
-
         public Hand(GameController controller)
         {
             Cards = new List<Card>();
             Result = new Result();
+            
+            State = State.NotYetPlayed;
+
+            this.controller = controller;
         }
 
-        public void ReceiveCard(Card card, bool isDeal)
-        {
-            Cards.Add(card);
-            var args = new OnCardReceivedEventArgs(this, card);
-            onCardReceived?.Invoke(this, args);
-            var score = this.CurrentScore;
-            if (score == 21 && isDeal)
-            {
-                IsBlackjack = true;
-                IsFinalized = true;
-                if(onBlackjack != null)
-                    onBlackjack(this, args);
-            }
-            else if (score > 21)
-            {
-                IsBust = true;
-                IsFinalized = true;
 
-                onBust?.Invoke(this, args);
-            }
-        }
-
-        public bool IsFinalized { get; set;  }
-
-        public bool IsBlackjack  { get; set; }
-
-        public bool IsBust { get; set; }
 
         public List<Card> Cards { get; }
 
@@ -68,6 +42,7 @@ namespace Blackjack.Core
                    runningTotal += i.Value;
                });
 
+                //treat Aces as 1 if current score is over 21
                if(runningTotal > 21)
                {
                    foreach (var c in Cards)
@@ -86,11 +61,10 @@ namespace Blackjack.Core
            }
        }
 
-       public bool IsActive
-       {
-           get;
-           set; 
-       }
+        public abstract bool CheckIsBust();
+  
+ 
+        public State State { get; set; }
 
         public Result Result { get; set; }
     }

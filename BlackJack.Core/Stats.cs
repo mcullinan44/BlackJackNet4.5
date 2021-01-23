@@ -13,25 +13,34 @@ namespace Blackjack.Core
             this.PlayerHand = playerHand;
             this.Score = playerHand.CurrentScore;
             this.BetAmount = playerHand.CurrentBet.Amount;
-            this.Result = Result.Playing;
+            this.Result = Core.Result.Undetermined;
             
         }
         public PlayerHand PlayerHand { get; set; }
         public int Score { get; set; }
         public double BetAmount { get; set;  }
-        public Result Result { get; set; }
+        public Result? Result { get; set; }
+
+        
         public double Bankroll { get; set;  }
     }
 
     public enum Result
     {
-        Playing,
+        Undetermined,
         Blackjack,
-        DealerBlackjack,
         Win,
         Push,
         Lost,
         Bust
+    }
+
+    public enum State
+    {
+        NotYetPlayed,
+        Playing,
+        Stand,
+        Doubled
     }
 
 

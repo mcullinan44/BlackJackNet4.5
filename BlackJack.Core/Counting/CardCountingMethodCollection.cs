@@ -30,7 +30,7 @@ namespace Blackjack.Core.Counting
             cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.Omega3, controller.Shoe));
             cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.ZenCount, controller.Shoe));
             this.controller = controller;
-            this.controller.onCardReceived += controller_onCardReceived;
+            //this.controller.onCardReceived += controller_onCardReceived;
         }
 
         void controller_onCardReceived(object sender, OnCardReceivedEventArgs args)

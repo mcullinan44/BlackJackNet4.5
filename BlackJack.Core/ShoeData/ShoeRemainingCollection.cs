@@ -34,7 +34,7 @@ namespace Blackjack.Core.ShoeData
             {
                 item.Calculate();
             }
-            controller.onCardReceived += controller_onCardReceived;
+            //controller.onCardReceived += controller_onCardReceived;
             controller.onShuffle += controller_onShuffle;
         }
 

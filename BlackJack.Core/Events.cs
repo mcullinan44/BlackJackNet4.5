@@ -8,15 +8,29 @@ namespace Blackjack.Core
 {
     public static class GameEvents
     {
-        public delegate void OnBankrollChange(object sender, EventArgs e);
+        public delegate void OnBankrollChange(object sender, OnBankrollChangedEventArgs e);
+
         public delegate void OnShowAllCards(object sender, EventArgs e);
         public delegate void OnActiveHandChanged(object sender, EventArgs e);
         public delegate void OnCardReceived(object sender, OnCardReceivedEventArgs args);
+        
+        public delegate void OnDealerCardReceived(object sender, OnCardReceivedEventArgs args);
+
         public delegate void OnBust(object sender, OnCardReceivedEventArgs args);
         public delegate void OnBlackjack(object sender, OnCardReceivedEventArgs args);
         public delegate void OnWinHand(Hand hand);
         public delegate void OnLoseHand(Hand hand);
+
+
+        public delegate void OnDealerBust(object sender, OnCardReceivedEventArgs args);
+        public delegate void OnDealerBlackjack(object sender, OnCardReceivedEventArgs args);
+        public delegate void OnDealerWinHand(Hand hand);
+        public delegate void OnDealerLoseHand(Hand hand);
+
         public delegate void OnPushHand(Hand hand);
+        
+
+
         public delegate void OnGameEnd(object sender, EventArgs e);
         public delegate void OnCardRemoved(object sender, OnCardReceivedEventArgs args);
         public delegate void OnBetChanged(object sender, OnBetChangedEventArgs args);
@@ -45,17 +59,25 @@ namespace Blackjack.Core
         }
     }
 
+    public class OnBankrollChangedEventArgs: EventArgs
+    {
+        public OnBankrollChangedEventArgs(Player player)
+        {
+            this.Player = player;
+        }
+        public Player Player { get; private set; }
+    }
+
 
     public class OnBetChangedEventArgs : EventArgs
     {
-        public OnBetChangedEventArgs(PlayerHand hand, Bet newBet)
+        public OnBetChangedEventArgs(Bet bet)
         {
-            this.Hand = hand;
-            this.NewBet = newBet;
+            this.Bet = bet;
         }
 
-        public PlayerHand Hand { get; private set; }
+        
 
-        public Bet NewBet { get; private set;}
+        public Bet Bet { get; private set;}
     }
 }

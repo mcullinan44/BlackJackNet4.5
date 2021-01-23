@@ -8,41 +8,50 @@ namespace Blackjack.Core
 {
     public sealed class GameController
     {
-        public event GameEvents.OnBankrollChange onBankrollchange;
+        public event GameEvents.OnBankrollChange onBankrollChange;
+        public event GameEvents.OnBetChanged onBetChanged;
         public event GameEvents.OnShowAllCards onShowAllCards;
-        public event GameEvents.OnActiveHandChanged onActiveHandChanged;
+
         public event GameEvents.OnGameEnd onGameEnd;
-        public event GameEvents.OnCardReceived onCardReceived;
+        public event GameEvents.OnDealerCardReceived onDealerCardReceived;
+
+        
         public event GameEvents.OnShuffle onShuffle;
 
-        private readonly Player player;
-        private readonly Dealer dealer;
-        private readonly int minimumBet;
-        private double bankroll = 0;
 
-        public GameController()
+
+
+
+        
+
+        public GameController(int numberOfDecks, int minimumBet)
         {
-            this.player = new Player(1);
-            this.dealer = new Dealer();  
+            this.PlayerList = new List<Player>();
+            this.Shoe = new Shoe(numberOfDecks);
+            this.Dealer = new Dealer();  
         }
 
-        void ActiveHand_onCardReceived(object sender, OnCardReceivedEventArgs args)
-        {
-            if (onCardReceived != null)
-                onCardReceived(sender, args);
-        }
 
         #region Properties
 
-        public Player PlayerOne
+
+        public void AddPlayer(string name, double bankRoll)
         {
-            get { return player; }
+            var newPlayer = new Player(1);
+            newPlayer.Name = name;
+            newPlayer.PlayerbankRoll = bankRoll;
+            PlayerList.Add(newPlayer);
         }
 
-        public Dealer Dealer
+
+        public List<Player> PlayerList { get; }
+
+        public Player ActivePlayer
         {
-            get { return dealer; }
+            get { return PlayerList.Where(i => i.IsActive).FirstOrDefault();  }
         }
+
+        public Dealer Dealer { get; }
 
         public int NumberOfDecks { get; set; }
 
@@ -54,15 +63,6 @@ namespace Blackjack.Core
             set;
         }
 
-        public double PlayerbankRoll
-        {
-            get { return bankroll; }
-            set
-            {
-                bankroll = value;
-                onBankrollchange(this, null);
-            }
-        }
 
         #endregion
 
@@ -74,167 +74,290 @@ namespace Blackjack.Core
             {
                 deck.Shuffle();
             }
-            if (onShuffle != null)
-                onShuffle(this, null);
-        }
-
-        public void StartNewSession(int numberOfDecks, int minimumBet)
-        {
-            this.Shoe = new Shoe(numberOfDecks);
-            var dealer = new Dealer();
-            var player = new Player(1);
+            onShuffle?.Invoke(this, null);
         }
 
         public void StartNewHand()
         {
-            PlayerOne.CurrentHands.Clear();
-            
-            DealerHand dh = new DealerHand(dealer, this);
-            dh.IsActive = true;
-            dealer.ActiveHand = dh;
-            PlayerHand ph = new PlayerHand(player, this);
-            ph.IsActive = true;
-            player.CurrentHands.Add(ph);
+            DealerHand dh = new DealerHand(Dealer, this);
+            Dealer.Hand = dh;
+            foreach(var player in PlayerList)
+            {
+                player.CurrentHands.Clear();
 
-            this.player.ActiveHand.onCardReceived += ActiveHand_onCardReceived;
-            this.dealer.ActiveHand.onCardReceived += ActiveHand_onCardReceived;
+                AddHandToPlayer(player, State.Playing);
+
+            }
+
+            PlayerList[0].IsActive = true;
+        }
+
+        public PlayerHand AddHandToPlayer(Player player, State state)
+        {
+            var result = new PlayerHand(player, this);
+            result.State = state;
+            player.CurrentHands.Add(result);
+            return result;
+        }
+
+        private void dealARoundOfCards()
+        {
+
+            //deal second card to each player
+            foreach (var player in PlayerList)
+            {
+                GivePlayerNextCardInShoe(player.ActiveHand);
+            }
+
+            //then to the dealer
+            giveDealerACard();
         }
 
         public void Deal()
         {
-            bool isPlayersCard = true;
-            for (var i = 0; i < 4; i++)
+            var dealerBlackJack = false;
+
+            dealARoundOfCards();
+
+            dealARoundOfCards();
+
+
+            //check if the dealer has blackjack.
+            if (Dealer.Hand.CurrentScore == 21)
             {
-                Card card = null;
-                if(isPlayersCard)
+                dealerBlackJack = true;
+            }
+
+            //check if any players have blackjack
+            foreach (var player in PlayerList)
+            {
+                if(player.ActiveHand.CurrentScore == 21)
                 {
-                    card = this.Shoe.NextCard;
                     
-                    //if(player.ActiveHand.Cards.Count == 0)
-                    //{
-                    //    card = this.Shoe.GetAnAce();
-                    //}
-                    //else
-                    //{
-                    //    card = this.Shoe.SplitTester(this.Shoe.GetAnAce());
-                    //}
-                    
-                    
-                    //  var card = player.ActiveHand.Cards.Count == 1 ? this.Shoe.SplitTester(player.ActiveHand.Cards[0]) : this.Shoe.NextCard;
+                    //if both the dealer and the player have blackjack, then PUSH.
+                    if(dealerBlackJack)
+                    {
+                        player.ActiveHand.Push();
 
-                    //testing
+                    }
+                    //Otherwise, the player wins 1.5x his original bet
+                    else
+                    {
+                        player.ActiveHand.Blackjack();
+                        
+
+                        //TODO: Need an onPotchange event to denote the house giving the extra half
+
+                        adjustPlayerBankRoll(player, player.ActiveHand.CurrentBet.Amount * 2.5);
+                    }
+                }
+                else //player does not have blackjack, but the dealer does. The player loses.
+                {
+                    if(dealerBlackJack)
+                    {
+                        //give dealer blackjack
+                        Dealer.Hand.Blackjack();
+
+
+                        //player loses
+                        player.ActiveHand.Lost();
+                    }
+                }
+            }
+
+            var moreToPlay = PlayerList.Any(i => i.CurrentHands.Any(x => x.Result == Result.Undetermined));
+            if(!moreToPlay)
+            {
+                onGameEnd?.Invoke(this, null);
+            }
+        }
+
+
+        private void adjustPlayerBankRoll(Player player, double amount)
+        {
+            player.PlayerbankRoll += amount;
+            var bargs = new OnBankrollChangedEventArgs(player);
+            onBankrollChange?.Invoke(this, bargs);
+        }
+
+
+        public void GivePlayerNextCardInShoe(PlayerHand playerHand)
+        {
+            Card card = this.Shoe.NextCard;
+
+            playerHand.AddCard(card);
+        }
 
 
 
-                    player.ActiveHand.ReceiveCard(card, true);
-                    isPlayersCard = false;
+        public void GivePlayerACard(PlayerHand playerHand, Card card)
+        {
+            playerHand.AddCard(card);
+        }
+
+
+        private void giveDealerACard()
+        {
+            Card card = this.Shoe.NextCard;
+            Dealer.Hand.Cards.Add(card);
+            var args = new OnCardReceivedEventArgs(Dealer.Hand, card);
+            onDealerCardReceived?.Invoke(this, args);
+
+        }
+
+        public void Hit(PlayerHand hand)
+        {
+            GivePlayerNextCardInShoe(hand);
+
+            //only finish the hand if its busted
+            if(CheckBust(hand))
+            {
+                FinishHand();
+            }
+        }
+
+
+        public bool CheckBust(PlayerHand hand)
+        {
+            var result = false;
+            if (hand.CheckIsBust())
+            {
+                result = true;
+            }
+            return result;
+        }
+
+        public void IncreaseBet(Bet bet, double amountToIncrease)
+        {
+            bet.Amount += amountToIncrease;
+            var args = new OnBetChangedEventArgs(bet);
+            onBetChanged?.Invoke(this, args);
+
+            bet.Hand.Player.PlayerbankRoll -= amountToIncrease;
+            var bargs = new OnBankrollChangedEventArgs(bet.Hand.Player);
+            onBankrollChange?.Invoke(this, bargs);
+        }
+
+
+        public void DoubleDown(PlayerHand hand)
+        {
+            hand.State = State.Doubled;
+
+            IncreaseBet(hand.CurrentBet, hand.CurrentBet.Amount);
+
+            GivePlayerNextCardInShoe(hand);
+
+            CheckBust(hand);
+
+            FinishHand();
+
+           
+        }
+
+        public void Stand(Hand hand)
+        {
+            hand.State = State.Stand;
+
+            FinishHand();
+            //nothing to do
+        }
+
+        public void FinishHand()
+        {
+            //move to the next player if there are no more unresolved hands.
+            var nextHand = this.ActivePlayer.CurrentHands.FirstOrDefault(i => i.State == State.NotYetPlayed);
+            if (nextHand == null)
+            {
+                this.ActivePlayer.IsActive = false;
+                ///var nextPlayerWithUnplayed = PlayerList.Find(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed));
+                //if there are hands that have not busted or blackjacked
+                var nextPlayer = PlayerList.FirstOrDefault(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed ));
+                var everythingIsbusted = !PlayerList.Any(i => i.CurrentHands.Any(x => x.Result != Result.Bust));
+
+
+                //If all hands have busted, end the game and don't play for the dealer
+                if (everythingIsbusted)
+                {
+                    //do nothing
+                    onGameEnd?.Invoke(this, null);
+                }
+                else if (nextPlayer == null)
+                {
+                    PlayDealer();
                 }
                 else
                 {
-                    card = this.Shoe.NextCard;
-                    dealer.ActiveHand.ReceiveCard(card, true);
-                    isPlayersCard = true;
+                    //move to the next player
+                    nextPlayer.IsActive = true;
+                    nextPlayer.CurrentHands[0].State = State.Playing;
                 }
             }
-        }
-
-        public PlayerHand CreateNewHandForSplit()
-        {
-            var hand = PlayerOne.CurrentHands.Find(i => i.IsActive);
-            var newHand = new PlayerHand(PlayerOne, this);
-            PlayerOne.CurrentHands.Add(newHand);
-            Bet bet = new Bet(newHand, this) { ChipList = hand.CurrentBet.ChipList, Amount = hand.CurrentBet.Amount };
-            newHand.CurrentBet = bet;
-
-            return newHand;
-        }
-
-        public void Hit()
-        {
-           var card = Shoe.NextCard;
-           PlayerOne.ActiveHand.ReceiveCard(card, false);
-        }
-
-        public void Stand()
-        {
-            PlayerOne.ActiveHand.IsFinalized = true;
-        }
-
-        public void DoubleDown()
-        {
-            PlayerOne.ActiveHand.CurrentBet.Amount *= 2;
-            PlayerOne.ActiveHand.ReceiveCard(Shoe.NextCard, false);
-            PlayerOne.ActiveHand.IsFinalized = true;
-        }
-
-        public Hand ActivateNextHand()
-        {
-            var currentHand = PlayerOne.ActiveHand;
-            var nextHand = PlayerOne.CurrentHands.LastOrDefault(v => !v.IsFinalized);
-            if (nextHand != null)
+            else 
             {
-                currentHand.IsActive = false;
-                nextHand.IsActive = true;
-                onActiveHandChanged(this, null);
+                nextHand.State = State.Playing;
             }
-            else if(PlayerOne.CurrentHands.Find(v => !v.IsBlackjack) != null 
-                && PlayerOne.CurrentHands.Find(v => !v.IsBust) != null)
+        }
+
+        public void PlayDealer()
+        {
+            onShowAllCards(this, null);
+
+            while (!Dealer.Hand.CheckIsBust() && Dealer.Hand.CurrentScore <= 16)
             {
-                
-                playForDealer();
-                if(!Dealer.ActiveHand.IsBust)
-                    calculateScore();
-                onGameEnd(this, null);
+                giveDealerACard();
             }
-            else {
-                onGameEnd(this, null);
-            }
-            return nextHand;
+
+            calculateScore();
+
+            onGameEnd(this, null);
         }
 
         #endregion
 
         #region PrivateMethods
 
-        private void playForDealer()
-        {
-            onShowAllCards(this, null);
-            Dealer dealer = (Dealer)this.Dealer;
-            while (!Dealer.ActiveHand.IsBust && Dealer.ActiveHand.CurrentScore <= 16)
-            {
-                var card = Shoe.NextCard;
-                dealer.ActiveHand.ReceiveCard(card, false);
-            }
-        }
-
         private void calculateScore()
         {
-            var dealerScore = Dealer.ActiveHand.CurrentScore;
-            foreach (PlayerHand i in PlayerOne.CurrentHands)
+            //check if dealer has blackJack
+            var dealerScore = Dealer.Hand.CurrentScore;
+            foreach(var player in PlayerList)
             {
-                if (!i.IsBust && !i.IsBlackjack)
+                foreach (PlayerHand i in player.CurrentHands)
                 {
-                    if (i.CurrentScore > dealerScore)
+                    if (i.State == State.Stand || i.State == State.Doubled)
                     {
-                        i.WinHand();
-                        ((DealerHand)Dealer.ActiveHand).LoseHand();
-                        
-                    }
-                    else if (i.CurrentScore == dealerScore)
-                    {
-                        i.PushHand();
-                        ((DealerHand)Dealer.ActiveHand).PushHand();
-                    }
-                    else
-                    {
-                        i.LoseHand();
-                        ((DealerHand)Dealer.ActiveHand).WinHand();
+                        if (i.CurrentScore > dealerScore || Dealer.Hand.CheckIsBust())
+                        {
+                            adjustPlayerBankRoll(player, i.CurrentBet.Amount * 2);
+                            i.Win();
+
+                            if(Dealer.Hand.CheckIsBust())
+                            {
+                                
+                            }
+                            else
+                            {
+
+                                Dealer.Hand.Lost();
+                                
+                            }
+                            
+                        }
+                        else if (i.CurrentScore == dealerScore)
+                        {
+                            adjustPlayerBankRoll(player, i.CurrentBet.Amount);
+                            i.Push();
+                            Dealer.Hand.Push(); 
+                        }
+                        else
+                        {
+                            i.Lost();
+                            Dealer.Hand.Win();
+                        }
                     }
                 }
-            }
+            } 
         }
-
-
         #endregion
 
     }

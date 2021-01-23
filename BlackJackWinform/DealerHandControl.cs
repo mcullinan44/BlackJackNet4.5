@@ -10,14 +10,26 @@ namespace BlackJackWinform
         public DealerHandControl(DealerHand hand, GameController controller,BlackJackForm form): base(hand, controller,form)
         {
             this.Hand = hand;
-            hand.onCardReceived += dealer_onCardReceived;
+            controller.onDealerCardReceived += dealer_onCardReceived;
             lblOutcome.Text = string.Empty;
             lblOutcome.Visible = false;
-            hand.onBust += dealer_onBust;
-            hand.onBlackjack += dealer_onBlackjack;
-            hand.onWinHand += hand_onWinHand;
-            hand.onLoseHand += hand_onLoseHand;
+
+
+            btnDoubleDown.Visible = false;
+            btnSplit.Visible = false;
+
+            btnStand.Visible = false;
+
+            btnHit.Visible = false;
+
+
+
+            hand.onDealerBust += dealer_onBust;
+            hand.onDealerBlackjack += dealer_onBlackjack;
+            hand.onDealerWinHand += hand_onWinHand;
+            hand.onDealerLoseHand += hand_onLoseHand;
             hand.onPushHand += hand_onPushHand;
+
         }
 
         void hand_onPushHand(Hand hand)

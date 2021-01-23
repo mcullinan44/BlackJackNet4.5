@@ -11,6 +11,8 @@ namespace BlackJackWinform
         protected readonly GameController Controller;
         protected readonly BlackJackForm BlackJackForm;
 
+        private readonly GameController controller;
+        protected readonly Hand hand;
         public HandControl(Hand hand, GameController controller, BlackJackForm blackjackForm)
         {
             InitializeComponent();
@@ -18,6 +20,13 @@ namespace BlackJackWinform
             this.pictureBoxList = new List<PictureBox>();
             this.Controller = controller;
             this.BlackJackForm = blackjackForm;
+
+            this.hand = hand;
+
+            btnDoubleDown.Enabled = true;
+            btnSplit.Enabled = false;
+            btnHit.Enabled = true;
+            btnStand.Enabled = true;
         }
 
         public void AddCard(Card card, bool isFaceUp)
@@ -67,6 +76,47 @@ namespace BlackJackWinform
         {
             this.pictureBoxList.Clear();
             pnlHand.Controls.Clear();
+        }
+
+        private void btnHit_Click(object sender, System.EventArgs e)
+        {
+            Controller.Hit((PlayerHand)hand);
+        }
+
+        private void btnStand_Click(object sender, System.EventArgs e)
+        {
+            Controller.Stand((PlayerHand)hand);
+
+            disableButtons();
+
+            
+        }
+
+        private void disableButtons()
+        {
+            btnDoubleDown.Enabled = false;
+            btnSplit.Enabled = false;
+            btnHit.Enabled = false;
+            btnStand.Enabled = false;
+        }
+
+        private void btnSplit_Click(object sender, System.EventArgs e)
+        {
+            ((BlackJackForm)this.ParentForm).SplitHand((PlayerHandControl)this);
+        }
+
+        private void btnDoubleDown_Click(object sender, System.EventArgs e)
+        {
+            Controller.DoubleDown((PlayerHand)hand);
+
+            disableButtons();
+
+            //if the double down results in the bust, bust
+            //if the double down does not bust, finishHand
+            
+            //if the hit results in a bust, finishedHand
+            //if the hit does not result in the bust, doNotFinishHand
+
         }
     }
 }

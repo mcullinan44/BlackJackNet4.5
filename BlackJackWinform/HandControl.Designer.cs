@@ -32,6 +32,10 @@
             this.pnlMoney = new System.Windows.Forms.Panel();
             this.lblOutcome = new System.Windows.Forms.Label();
             this.pnlHand = new System.Windows.Forms.Panel();
+            this.btnStand = new System.Windows.Forms.Button();
+            this.btnSplit = new System.Windows.Forms.Button();
+            this.btnHit = new System.Windows.Forms.Button();
+            this.btnDoubleDown = new System.Windows.Forms.Button();
             this.pnlMoney.SuspendLayout();
             this.pnlHand.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +55,7 @@
             // pnlMoney
             // 
             this.pnlMoney.Controls.Add(this.lblOutcome);
-            this.pnlMoney.Location = new System.Drawing.Point(0, 0);
+            this.pnlMoney.Location = new System.Drawing.Point(14, 3);
             this.pnlMoney.Name = "pnlMoney";
             this.pnlMoney.Size = new System.Drawing.Size(242, 54);
             this.pnlMoney.TabIndex = 1;
@@ -71,19 +75,63 @@
             // pnlHand
             // 
             this.pnlHand.Controls.Add(this.lblActive);
-            this.pnlHand.Location = new System.Drawing.Point(0, 60);
+            this.pnlHand.Location = new System.Drawing.Point(14, 60);
             this.pnlHand.Name = "pnlHand";
-            this.pnlHand.Size = new System.Drawing.Size(242, 245);
+            this.pnlHand.Size = new System.Drawing.Size(242, 194);
             this.pnlHand.TabIndex = 2;
+            // 
+            // btnStand
+            // 
+            this.btnStand.Location = new System.Drawing.Point(67, 260);
+            this.btnStand.Name = "btnStand";
+            this.btnStand.Size = new System.Drawing.Size(43, 31);
+            this.btnStand.TabIndex = 4;
+            this.btnStand.Text = "Stand";
+            this.btnStand.UseVisualStyleBackColor = true;
+            this.btnStand.Click += new System.EventHandler(this.btnStand_Click);
+            // 
+            // btnSplit
+            // 
+            this.btnSplit.Location = new System.Drawing.Point(171, 260);
+            this.btnSplit.Name = "btnSplit";
+            this.btnSplit.Size = new System.Drawing.Size(43, 31);
+            this.btnSplit.TabIndex = 6;
+            this.btnSplit.Text = "Split";
+            this.btnSplit.UseVisualStyleBackColor = true;
+            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
+            // 
+            // btnHit
+            // 
+            this.btnHit.Location = new System.Drawing.Point(21, 260);
+            this.btnHit.Name = "btnHit";
+            this.btnHit.Size = new System.Drawing.Size(40, 31);
+            this.btnHit.TabIndex = 3;
+            this.btnHit.Text = "Hit";
+            this.btnHit.UseVisualStyleBackColor = true;
+            this.btnHit.Click += new System.EventHandler(this.btnHit_Click);
+            // 
+            // btnDoubleDown
+            // 
+            this.btnDoubleDown.Location = new System.Drawing.Point(116, 260);
+            this.btnDoubleDown.Name = "btnDoubleDown";
+            this.btnDoubleDown.Size = new System.Drawing.Size(49, 31);
+            this.btnDoubleDown.TabIndex = 5;
+            this.btnDoubleDown.Text = "Double";
+            this.btnDoubleDown.UseVisualStyleBackColor = true;
+            this.btnDoubleDown.Click += new System.EventHandler(this.btnDoubleDown_Click);
             // 
             // HandControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnStand);
+            this.Controls.Add(this.btnHit);
+            this.Controls.Add(this.btnDoubleDown);
+            this.Controls.Add(this.btnSplit);
             this.Controls.Add(this.pnlHand);
             this.Controls.Add(this.pnlMoney);
             this.Name = "HandControl";
-            this.Size = new System.Drawing.Size(245, 308);
+            this.Size = new System.Drawing.Size(275, 306);
             this.pnlMoney.ResumeLayout(false);
             this.pnlMoney.PerformLayout();
             this.pnlHand.ResumeLayout(false);
@@ -98,5 +146,9 @@
         protected System.Windows.Forms.Panel pnlMoney;
         protected System.Windows.Forms.Label lblOutcome;
         protected System.Windows.Forms.Panel pnlHand;
+        public System.Windows.Forms.Button btnStand;
+        public System.Windows.Forms.Button btnSplit;
+        public System.Windows.Forms.Button btnHit;
+        public System.Windows.Forms.Button btnDoubleDown;
     }
 }

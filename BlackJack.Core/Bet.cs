@@ -9,25 +9,16 @@ namespace Blackjack.Core
 {
     public sealed class Bet
     {
-        public event GameEvents.OnBetChanged onBetChanged;
-
-        private List<Chip> chipList;
         private double amount = 0;
-        PlayerHand hand;
-        GameController controller;
-        public Bet(PlayerHand hand, GameController gc)
-        {
-            chipList = new List<Chip>();
+        
 
-            this.controller = gc;
-            this.hand = hand;
+        public Bet(PlayerHand hand)
+        {
+            this.Hand = hand;
         }
 
-        public List<Chip> ChipList
-        {
-            get { return chipList; }
-            set { chipList = value; }
-        }
+
+        public PlayerHand Hand { get; set; }
 
         public double Amount
         {
@@ -35,15 +26,7 @@ namespace Blackjack.Core
             set
             {
                 var oldAmount = Amount;
-
                 amount = value;
-                controller.PlayerbankRoll -= (amount - oldAmount);
-
-                if (onBetChanged != null)
-                {
-                    var b = new OnBetChangedEventArgs(hand, this);
-                    onBetChanged(this, b);
-                }
             }
         }
     }
