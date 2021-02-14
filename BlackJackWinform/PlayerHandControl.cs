@@ -69,7 +69,6 @@ namespace BlackJackWinform
                 btnSplit.Enabled = false;
             }
 
-
             if (PlayerHand.Cards.Count == 2)
             {
                 if (PlayerHand.Cards[0].CardType == PlayerHand.Cards[1].CardType
@@ -88,8 +87,6 @@ namespace BlackJackWinform
                 ///overried for testing (enable these)
                 this.btnDoubleDown.Enabled = this.btnSplit.Enabled = false;
             }
-
-
         }
 
         public void DeactivateButtons()

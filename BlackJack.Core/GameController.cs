@@ -191,7 +191,7 @@ namespace Blackjack.Core
                 if(playerHand.State == State.Playing && playerHand.CurrentScore == 21)
                 {
                     playerHand.Blackjack();
-                    FinishHand();
+                    FinishHand(playerHand.Player);
                 }
 
             }
@@ -222,7 +222,7 @@ namespace Blackjack.Core
             //only finish the hand if its busted
             if(CheckBust(hand))
             {
-                FinishHand();
+                FinishHand(hand.Player);
             }
         }
 
@@ -257,7 +257,7 @@ namespace Blackjack.Core
 
             CheckBust(hand);
 
-            FinishHand();
+            FinishHand(hand.Player);
 
         }
 
@@ -265,17 +265,17 @@ namespace Blackjack.Core
         {
             hand.State = State.Stand;
 
-            FinishHand();
+            FinishHand(hand.Player);
             //nothing to do
         }
 
-        public void FinishHand()
+        public void FinishHand(Player player)
         {
             //move to the next player if there are no more unresolved hands.
-            var nextHand = this.ActivePlayer.CurrentHands.FirstOrDefault(i => i.State == State.NotYetPlayed);
+            var nextHand = player.CurrentHands.FirstOrDefault(i => i.State == State.NotYetPlayed);
             if (nextHand == null)
             {
-                this.ActivePlayer.IsActive = false;
+                player.IsActive = false;
                 ///var nextPlayerWithUnplayed = PlayerList.Find(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed));
                 //if there are hands that have not busted or blackjacked
                 var nextPlayer = PlayerList.FirstOrDefault(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed ));
