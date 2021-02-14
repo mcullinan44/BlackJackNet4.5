@@ -69,7 +69,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(0, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 809);
+            this.splitter1.Size = new System.Drawing.Size(3, 789);
             this.splitter1.TabIndex = 38;
             this.splitter1.TabStop = false;
             // 
@@ -78,7 +78,7 @@
             this.layout.BackColor = System.Drawing.Color.Transparent;
             this.layout.Location = new System.Drawing.Point(19, 343);
             this.layout.Name = "layout";
-            this.layout.Size = new System.Drawing.Size(1052, 309);
+            this.layout.Size = new System.Drawing.Size(820, 302);
             this.layout.TabIndex = 34;
             // 
             // label6
@@ -87,7 +87,7 @@
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Yellow;
-            this.label6.Location = new System.Drawing.Point(65, 302);
+            this.label6.Location = new System.Drawing.Point(194, 302);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(388, 25);
             this.label6.TabIndex = 16;
@@ -96,14 +96,14 @@
             // dealerLayoutPanel
             // 
             this.dealerLayoutPanel.BackColor = System.Drawing.Color.Transparent;
-            this.dealerLayoutPanel.Location = new System.Drawing.Point(19, 12);
+            this.dealerLayoutPanel.Location = new System.Drawing.Point(310, 12);
             this.dealerLayoutPanel.Name = "dealerLayoutPanel";
-            this.dealerLayoutPanel.Size = new System.Drawing.Size(496, 275);
+            this.dealerLayoutPanel.Size = new System.Drawing.Size(496, 287);
             this.dealerLayoutPanel.TabIndex = 33;
             // 
             // btnBet
             // 
-            this.btnBet.Location = new System.Drawing.Point(253, 658);
+            this.btnBet.Location = new System.Drawing.Point(335, 651);
             this.btnBet.Name = "btnBet";
             this.btnBet.Size = new System.Drawing.Size(131, 23);
             this.btnBet.TabIndex = 11;
@@ -117,7 +117,7 @@
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Yellow;
-            this.label3.Location = new System.Drawing.Point(261, 740);
+            this.label3.Location = new System.Drawing.Point(319, 727);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(104, 29);
             this.label3.TabIndex = 13;
@@ -128,7 +128,7 @@
             this.tbBet.BackColor = System.Drawing.Color.Black;
             this.tbBet.Font = new System.Drawing.Font("HP Simplified", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbBet.ForeColor = System.Drawing.Color.Yellow;
-            this.tbBet.Location = new System.Drawing.Point(290, 699);
+            this.tbBet.Location = new System.Drawing.Point(355, 689);
             this.tbBet.Mask = "#####";
             this.tbBet.Name = "tbBet";
             this.tbBet.Size = new System.Drawing.Size(75, 26);
@@ -140,7 +140,7 @@
             this.lblBankroll.BackColor = System.Drawing.Color.Transparent;
             this.lblBankroll.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblBankroll.ForeColor = System.Drawing.Color.Yellow;
-            this.lblBankroll.Location = new System.Drawing.Point(371, 740);
+            this.lblBankroll.Location = new System.Drawing.Point(429, 727);
             this.lblBankroll.Name = "lblBankroll";
             this.lblBankroll.Size = new System.Drawing.Size(25, 29);
             this.lblBankroll.TabIndex = 39;
@@ -150,9 +150,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(1353, 809);
+            this.BackColor = System.Drawing.Color.DarkGreen;
+            this.ClientSize = new System.Drawing.Size(862, 789);
             this.Controls.Add(this.lblBankroll);
             this.Controls.Add(this.layout);
             this.Controls.Add(this.dealerLayoutPanel);

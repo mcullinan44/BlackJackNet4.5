@@ -71,36 +71,7 @@ namespace BlackJackWinform
                         x = (number % 2) + 8;
                         y = number / 2;
                     }
-                //}
-                //else
-                //{
-                //    //Show back of the card
-                //    x = 7;
-                //    y = 5;
-                //}
-
-              //  ((RectangleGeometry)imgCard.Clip).Rect = new Rect(x * CardWidthRect, y * CardHeightRect, CardWidth, CardHeight);
-                //foreach (Transform tran in ((TransformGroup)imgCard.RenderTransform).Children)
-                //{
-                //    if (tran.GetType() == typeof(TranslateTransform))
-                //    {
-                //        tran.SetValue(TranslateTransform.XProperty, -x * CardWidthRect);
-                //        tran.SetValue(TranslateTransform.YProperty, -y * CardHeightRect);
-                //    }
-                //}
-               // imgCard.RenderTransformOrigin = new Point(0.05 + (x * 0.1), 0.08 + (y * 0.166666));
-
-
-            //if (card.CardSuit == Suit.Clubs) topy = 0;
-            //if (card.CardSuit == Suit.Spades) topy = 98;
-            //if (card.CardSuit == Suit.Hearts) topy = 196;
-            //if (card.CardSuit == Suit.Diamonds) topy = 294;
-
-            //topx = 73 * Convert.ToInt32(card.CardType == CardType.Ace ? 0 
-            //    : card.CardType == CardType.Jack ? card.Value
-            //    : card.CardType == CardType.Queen ? card.Value + 1 
-            //    : card.CardType == CardType.King ? card.Value + 2 
-            //    : card.Value - 1);
+      
 
              Rectangle rect = new Rectangle(x * CardWidthRect, y * CardHeightRect, CardWidth, CardHeight);
 
