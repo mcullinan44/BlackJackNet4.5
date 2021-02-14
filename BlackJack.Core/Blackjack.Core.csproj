@@ -10,6 +10,7 @@
     <RootNamespace>Blackjack.Core</RootNamespace>
     <AssemblyName>Blackjack.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
