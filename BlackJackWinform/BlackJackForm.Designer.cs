@@ -78,7 +78,7 @@
             this.layout.BackColor = System.Drawing.Color.Transparent;
             this.layout.Location = new System.Drawing.Point(19, 343);
             this.layout.Name = "layout";
-            this.layout.Size = new System.Drawing.Size(636, 309);
+            this.layout.Size = new System.Drawing.Size(1052, 309);
             this.layout.TabIndex = 34;
             // 
             // label6

@@ -15,7 +15,7 @@ namespace Blackjack.Core
             Cards = new List<Card>();
             Result = new Result();
             
-            State = State.NotYetPlayed;
+        
 
             this.controller = controller;
         }
@@ -59,12 +59,13 @@ namespace Blackjack.Core
 
                return runningTotal;
            }
+          
        }
 
         public abstract bool CheckIsBust();
   
  
-        public State State { get; set; }
+    
 
         public Result Result { get; set; }
     }

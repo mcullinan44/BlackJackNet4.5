@@ -16,8 +16,12 @@ namespace Blackjack.Core
         public event GameEvents.OnPushHand onPushHand;
         public event GameEvents.OnBlackjack onBlackjack;
         public event GameEvents.OnBust onBust;
+        public event GameEvents.OnBetChanged onBetChanged;
+        public event GameEvents.OnActivate onActivate;
 
-        
+
+
+        private State _state = State.NotYetPlayed;
 
 
         public PlayerHand(Player player, GameController gameController)
@@ -30,6 +34,19 @@ namespace Blackjack.Core
 
 
         }
+
+        public State State
+        {
+            get { return this._state; }
+            set {
+                this._state = value;
+                if(this._state == State.Playing)
+                {
+                    onActivate?.Invoke(this, null);
+                }
+            }
+        }
+        
 
         public void Win()
         {
@@ -54,11 +71,20 @@ namespace Blackjack.Core
             this.Result = Result.Blackjack;
             var args = new OnCardReceivedEventArgs(this, null);
             onBlackjack?.Invoke(this, args);
+            
         }
 
         public Player Player { get; set; }
 
         public Bet CurrentBet { get; set; }
+
+        public void IncreaseBet(double amountToIncrease)
+        {
+            CurrentBet.Amount += amountToIncrease;
+            var args = new OnBetChangedEventArgs(CurrentBet);
+            onBetChanged?.Invoke(this, args);
+
+        }
 
         public void AddCard(Card card)
         {
@@ -97,10 +123,7 @@ namespace Blackjack.Core
         }
 
 
-        public bool IsActive
-        {
-            get { return this.State == State.Playing; }
-        }
+
 
     }
 }

@@ -89,7 +89,6 @@ namespace BlackJackWinform
 
             disableButtons();
 
-            
         }
 
         private void disableButtons()

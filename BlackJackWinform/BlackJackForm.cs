@@ -128,7 +128,7 @@ namespace BlackJackWinform
             layout.Controls.Clear();
 
 
-            controller.IncreaseBet(controller.PlayerList[0].ActiveHand.CurrentBet, double.Parse(tbBet.Text));
+            controller.IncreaseBet(controller.ActivePlayer.ActiveHand, double.Parse(tbBet.Text));
 
             var playerHandControl = new PlayerHandControl(controller.ActivePlayer.ActiveHand, controller,this);
 
@@ -155,41 +155,28 @@ namespace BlackJackWinform
 
             //take a card from the source hand
             Card cardToMoveToNewHand = sourceHandControl.TakeLastCard();
-
-
             //create a new hand for the active player
             PlayerHand newHand = controller.AddHandToPlayer(controller.ActivePlayer, State.NotYetPlayed);
             newHand.State = State.NotYetPlayed;
+
+
             //add the card that was removed from the source to the new hand
             var newPlayerHandControl = new PlayerHandControl(newHand, controller, this);
-
             controller.GivePlayerACard(newHand, cardToMoveToNewHand);
-
             newPlayerHandControl.Visible = true;
             playerHandControlList.Add(newPlayerHandControl);
             layout.Controls.Add(newPlayerHandControl);
 
-            controller.IncreaseBet(newHand.CurrentBet, double.Parse(tbBet.Text));
-            
-            newPlayerHandControl.btnDoubleDown.Enabled = false;
-            newPlayerHandControl.btnHit.Enabled = false;
-            newPlayerHandControl.btnStand.Enabled = false;
-            newPlayerHandControl.btnSplit.Enabled = false;
 
-     
+            controller.IncreaseBet(newHand, double.Parse(tbBet.Text));
 
 
 
+            newPlayerHandControl.DeactivateButtons();
 
-            //deal a new card to the old hand
-            //controller.GivePlayerACard(sourceHandControl.Hand);
+            controller.GivePlayerNextCardInShoe(controller.ActivePlayer.ActiveHand, true);
 
-            //PlayerHand ph = new PlayerHand(controller.ActivePlayer, controller);
-            //controller.ActivePlayer.CurrentHands.Add(ph);
-
-
-
-
+            controller.GivePlayerNextCardInShoe(newHand, true);
 
         }
 
@@ -200,7 +187,7 @@ namespace BlackJackWinform
             var newHand = playerHandControlList.Find(i => i.PlayerHand == controller.ActivePlayer.ActiveHand);
             if (newHand != null)
             {
-                newHand.IsActive = true;
+                newHand.IsPlaying = true;
             }
         }
 

@@ -9,7 +9,7 @@ namespace Blackjack.Core
     public sealed class GameController
     {
         public event GameEvents.OnBankrollChange onBankrollChange;
-        public event GameEvents.OnBetChanged onBetChanged;
+        
         public event GameEvents.OnShowAllCards onShowAllCards;
 
         public event GameEvents.OnGameEnd onGameEnd;
@@ -18,11 +18,6 @@ namespace Blackjack.Core
         
         public event GameEvents.OnShuffle onShuffle;
 
-
-
-
-
-        
 
         public GameController(int numberOfDecks, int minimumBet)
         {
@@ -106,8 +101,10 @@ namespace Blackjack.Core
             //deal second card to each player
             foreach (var player in PlayerList)
             {
-                GivePlayerNextCardInShoe(player.ActiveHand);
+                GivePlayerNextCardInShoe(player.ActiveHand, false);
+        
             }
+
 
             //then to the dealer
             giveDealerACard();
@@ -116,8 +113,9 @@ namespace Blackjack.Core
         public void Deal()
         {
             var dealerBlackJack = false;
-
+       
             dealARoundOfCards();
+       
 
             dealARoundOfCards();
 
@@ -181,11 +179,23 @@ namespace Blackjack.Core
         }
 
 
-        public void GivePlayerNextCardInShoe(PlayerHand playerHand)
+        public void GivePlayerNextCardInShoe(PlayerHand playerHand, bool checkBlackJackImmediately)
         {
             Card card = this.Shoe.NextCard;
 
             playerHand.AddCard(card);
+
+
+            if(checkBlackJackImmediately)
+            {
+                if(playerHand.State == State.Playing && playerHand.CurrentScore == 21)
+                {
+                    playerHand.Blackjack();
+                    FinishHand();
+                }
+
+            }
+
         }
 
 
@@ -207,7 +217,7 @@ namespace Blackjack.Core
 
         public void Hit(PlayerHand hand)
         {
-            GivePlayerNextCardInShoe(hand);
+            GivePlayerNextCardInShoe(hand, false);
 
             //only finish the hand if its busted
             if(CheckBust(hand))
@@ -227,14 +237,12 @@ namespace Blackjack.Core
             return result;
         }
 
-        public void IncreaseBet(Bet bet, double amountToIncrease)
+        public void IncreaseBet(PlayerHand hand, double amountToIncrease)
         {
-            bet.Amount += amountToIncrease;
-            var args = new OnBetChangedEventArgs(bet);
-            onBetChanged?.Invoke(this, args);
+            hand.IncreaseBet(amountToIncrease);
 
-            bet.Hand.Player.PlayerbankRoll -= amountToIncrease;
-            var bargs = new OnBankrollChangedEventArgs(bet.Hand.Player);
+            hand.Player.PlayerbankRoll -= amountToIncrease;
+            var bargs = new OnBankrollChangedEventArgs(hand.Player);
             onBankrollChange?.Invoke(this, bargs);
         }
 
@@ -243,18 +251,17 @@ namespace Blackjack.Core
         {
             hand.State = State.Doubled;
 
-            IncreaseBet(hand.CurrentBet, hand.CurrentBet.Amount);
+            IncreaseBet(hand, hand.CurrentBet.Amount);
 
-            GivePlayerNextCardInShoe(hand);
+            GivePlayerNextCardInShoe(hand, false);
 
             CheckBust(hand);
 
             FinishHand();
 
-           
         }
 
-        public void Stand(Hand hand)
+        public void Stand(PlayerHand hand)
         {
             hand.State = State.Stand;
 
@@ -294,6 +301,7 @@ namespace Blackjack.Core
             }
             else 
             {
+                
                 nextHand.State = State.Playing;
             }
         }

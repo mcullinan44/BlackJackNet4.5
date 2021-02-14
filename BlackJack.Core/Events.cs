@@ -11,7 +11,7 @@ namespace Blackjack.Core
         public delegate void OnBankrollChange(object sender, OnBankrollChangedEventArgs e);
 
         public delegate void OnShowAllCards(object sender, EventArgs e);
-        public delegate void OnActiveHandChanged(object sender, EventArgs e);
+        public delegate void OnActivate(object sender, EventArgs e);
         public delegate void OnCardReceived(object sender, OnCardReceivedEventArgs args);
         
         public delegate void OnDealerCardReceived(object sender, OnCardReceivedEventArgs args);
