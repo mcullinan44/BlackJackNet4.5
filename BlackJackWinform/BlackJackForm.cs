@@ -69,7 +69,10 @@ namespace BlackJackWinform
 
         private void btnHit_Click(object sender, EventArgs e)
         {
-            controller.Hit(controller.ActivePlayer.ActiveHand);
+            
+            
+
+            
         }
 
         private void btnStand_Click(object sender, EventArgs e)

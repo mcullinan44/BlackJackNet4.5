@@ -122,6 +122,44 @@ namespace Blackjack.Core
 
         }
 
+        public void Hit()
+        {
+            controller.GivePlayerNextCardInShoe(this, false);
+
+            if(CheckIsBust())
+            {
+                controller.FinishHand(this.Player);
+            }
+        }
+
+
+ 
+        public void DoubleDown()
+        {
+            this.State = State.Doubled;
+
+            controller.IncreaseBet(this, this.CurrentBet.Amount);
+
+            controller.GivePlayerNextCardInShoe(this, false);
+
+            this.CheckIsBust();
+
+            //CheckBust(hand);
+
+            controller.FinishHand(this.Player);
+
+        }
+
+        public void Stand()
+        {
+            this.State = State.Stand;
+
+            controller.FinishHand(this.Player);
+            //nothing to do
+        }
+
+
+
 
 
 

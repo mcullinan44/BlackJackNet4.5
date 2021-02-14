@@ -182,15 +182,12 @@ namespace BlackJackWinform
             get { return this.lblActive.Visible; }
             set
             {
-                if(value)
-                {
-                    this.BorderStyle = BorderStyle.FixedSingle;
-             
-                }
-                else
+                if(!value)
                 {
                     DeactivateButtons();
+
                 }
+                
                 
                 this.lblActive.Visible = value;
 

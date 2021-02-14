@@ -9,13 +9,9 @@ namespace Blackjack.Core
     public sealed class GameController
     {
         public event GameEvents.OnBankrollChange onBankrollChange;
-        
         public event GameEvents.OnShowAllCards onShowAllCards;
-
         public event GameEvents.OnGameEnd onGameEnd;
         public event GameEvents.OnDealerCardReceived onDealerCardReceived;
-
-        
         public event GameEvents.OnShuffle onShuffle;
 
 
@@ -193,12 +189,8 @@ namespace Blackjack.Core
                     playerHand.Blackjack();
                     FinishHand(playerHand.Player);
                 }
-
             }
-
         }
-
-
 
         public void GivePlayerACard(PlayerHand playerHand, Card card)
         {
@@ -215,27 +207,7 @@ namespace Blackjack.Core
 
         }
 
-        public void Hit(PlayerHand hand)
-        {
-            GivePlayerNextCardInShoe(hand, false);
-
-            //only finish the hand if its busted
-            if(CheckBust(hand))
-            {
-                FinishHand(hand.Player);
-            }
-        }
-
-
-        public bool CheckBust(PlayerHand hand)
-        {
-            var result = false;
-            if (hand.CheckIsBust())
-            {
-                result = true;
-            }
-            return result;
-        }
+        
 
         public void IncreaseBet(PlayerHand hand, double amountToIncrease)
         {
@@ -247,36 +219,14 @@ namespace Blackjack.Core
         }
 
 
-        public void DoubleDown(PlayerHand hand)
-        {
-            hand.State = State.Doubled;
-
-            IncreaseBet(hand, hand.CurrentBet.Amount);
-
-            GivePlayerNextCardInShoe(hand, false);
-
-            CheckBust(hand);
-
-            FinishHand(hand.Player);
-
-        }
-
-        public void Stand(PlayerHand hand)
-        {
-            hand.State = State.Stand;
-
-            FinishHand(hand.Player);
-            //nothing to do
-        }
-
         public void FinishHand(Player player)
         {
-            //move to the next player if there are no more unresolved hands.
             var nextHand = player.CurrentHands.FirstOrDefault(i => i.State == State.NotYetPlayed);
+            //move to the next player if there are no more unresolved hands.
             if (nextHand == null)
             {
                 player.IsActive = false;
-                ///var nextPlayerWithUnplayed = PlayerList.Find(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed));
+                
                 //if there are hands that have not busted or blackjacked
                 var nextPlayer = PlayerList.FirstOrDefault(i => i.CurrentHands.Any(x => x.State == State.NotYetPlayed ));
                 var everythingIsbusted = !PlayerList.Any(i => i.CurrentHands.Any(x => x.Result != Result.Bust));
@@ -290,7 +240,16 @@ namespace Blackjack.Core
                 }
                 else if (nextPlayer == null)
                 {
-                    PlayDealer();
+                    onShowAllCards(this, null);
+
+                    while (!Dealer.Hand.CheckIsBust() && Dealer.Hand.CurrentScore <= 16)
+                    {
+                        giveDealerACard();
+                    }
+
+                    calculateScore();
+
+                    onGameEnd(this, null);
                 }
                 else
                 {
@@ -304,20 +263,6 @@ namespace Blackjack.Core
                 
                 nextHand.State = State.Playing;
             }
-        }
-
-        public void PlayDealer()
-        {
-            onShowAllCards(this, null);
-
-            while (!Dealer.Hand.CheckIsBust() && Dealer.Hand.CurrentScore <= 16)
-            {
-                giveDealerACard();
-            }
-
-            calculateScore();
-
-            onGameEnd(this, null);
         }
 
         #endregion
@@ -339,6 +284,7 @@ namespace Blackjack.Core
                             adjustPlayerBankRoll(player, i.CurrentBet.Amount * 2);
                             i.Win();
 
+                            //TODO: fix, this raises a second event.
                             if(Dealer.Hand.CheckIsBust())
                             {
                                 
