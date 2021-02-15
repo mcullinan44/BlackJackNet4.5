@@ -23,6 +23,8 @@ namespace BlackJackWinform
 
             this.hand = hand;
 
+      
+
             btnDoubleDown.Enabled = true;
             btnSplit.Enabled = false;
             btnHit.Enabled = true;
@@ -35,7 +37,6 @@ namespace BlackJackWinform
             //pictureBox.Height = 106;
             //pictureBox.Width = 72;
 
-
             pictureBox.Height = 138;
             pictureBox.Width = 94;
 
@@ -46,8 +47,6 @@ namespace BlackJackWinform
                 p.Y = pictureBoxList[pictureBoxList.Count - 1].Location.Y + 18;
             }
 
-            
-
             pictureBox.Location = p;
             pictureBox.Tag = card;
             pictureBoxList.Add(pictureBox);
@@ -56,9 +55,6 @@ namespace BlackJackWinform
             var image = isFaceUp ? ImageHelper.GetFaceImageForCard(card) : ImageHelper.GetBackImage();
             Size size = new Size(94, 138);
             pictureBox.Image = ResizeImage(image, size);
-
-          
-
         }
 
         public static Image ResizeImage(Image img, Size size)

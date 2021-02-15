@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblActive = new System.Windows.Forms.Label();
             this.pnlMoney = new System.Windows.Forms.Panel();
             this.lblOutcome = new System.Windows.Forms.Label();
@@ -36,6 +37,7 @@
             this.btnSplit = new System.Windows.Forms.Button();
             this.btnHit = new System.Windows.Forms.Button();
             this.btnDoubleDown = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.pnlMoney.SuspendLayout();
             this.pnlHand.SuspendLayout();
             this.SuspendLayout();
@@ -150,5 +152,6 @@
         public System.Windows.Forms.Button btnSplit;
         public System.Windows.Forms.Button btnHit;
         public System.Windows.Forms.Button btnDoubleDown;
+        private System.Windows.Forms.Timer timer1;
     }
 }
