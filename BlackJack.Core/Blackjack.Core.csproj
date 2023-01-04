@@ -10,7 +10,6 @@
     <RootNamespace>Blackjack.Core</RootNamespace>
     <AssemblyName>Blackjack.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -41,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bet.cs" />
-    <Compile Include="Card.cs" />
-    <Compile Include="Chip.cs" />
+    <Compile Include="Entities\Bet.cs" />
+    <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\Chip.cs" />
     <Compile Include="Counting\BaseCardCountingStrategy.cs" />
     <Compile Include="Counting\CardCountingMethodCollection.cs" />
     <Compile Include="Counting\CardCountingMethodFactory.cs" />
@@ -54,26 +53,26 @@
     <Compile Include="Counting\KO.cs" />
     <Compile Include="Counting\OmegaIII.cs" />
     <Compile Include="Counting\ZenCount.cs" />
-    <Compile Include="Dealer.cs" />
-    <Compile Include="DealerHand.cs" />
-    <Compile Include="Deck.cs" />
-    <Compile Include="Defaults.cs" />
+    <Compile Include="Entities\Dealer.cs" />
+    <Compile Include="Entities\DealerHand.cs" />
+    <Compile Include="Entities\Deck.cs" />
+    <Compile Include="Entities\Defaults.cs" />
     <Compile Include="Events.cs" />
-    <Compile Include="Hand.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PlayerHand.cs" />
-    <Compile Include="PlayerHands.cs" />
+    <Compile Include="Entities\Hand.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\PlayerHand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GameController.cs" />
-    <Compile Include="Shoe.cs" />
+    <Compile Include="Entities\Shoe.cs" />
     <Compile Include="ShoeData\ShoeRemaining.cs" />
     <Compile Include="ShoeData\ShoeRemainingCollection.cs" />
-    <Compile Include="Stats.cs" />
-    <Compile Include="Suit.cs" />
+    <Compile Include="Entities\Stats.cs" />
+    <Compile Include="Entities\Suit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="windows-playing-cards.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Blackjack.Core
+﻿namespace Blackjack.Core.Entities
 {
     public class Stats
     {
@@ -13,15 +7,12 @@ namespace Blackjack.Core
             this.PlayerHand = playerHand;
             this.Score = playerHand.CurrentScore;
             this.BetAmount = playerHand.CurrentBet.Amount;
-            this.Result = Core.Result.Undetermined;
-            
+            this.Result = Entities.Result.Undetermined;
         }
         public PlayerHand PlayerHand { get; set; }
         public int Score { get; set; }
         public double BetAmount { get; set;  }
         public Result? Result { get; set; }
-
-        
         public double Bankroll { get; set;  }
     }
 
@@ -43,7 +34,6 @@ namespace Blackjack.Core
         Doubled
     }
 
-
     public class ShoeStat
     {
         public string CardString { get; set; }
@@ -51,7 +41,5 @@ namespace Blackjack.Core
         public bool IsDealt { get; set; }
 
         public int DeckNumber { get; set; }
-
     }
-
 }

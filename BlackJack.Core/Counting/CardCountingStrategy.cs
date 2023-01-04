@@ -11,7 +11,7 @@ namespace Blackjack.Core.Counting
         HiLo,
         HiOp1,
         HiOpt2,
-        KO,
+        Ko,
         Omega3,
         Red7,
         ZenCount

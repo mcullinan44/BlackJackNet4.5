@@ -34,29 +34,30 @@
             this.label4 = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.layout = new System.Windows.Forms.FlowLayoutPanel();
+            this._playerLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
-            this.dealerLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnBet = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbBet = new System.Windows.Forms.MaskedTextBox();
-            this.lblBankroll = new System.Windows.Forms.Label();
+            this._dealerLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this._btnBet = new System.Windows.Forms.Button();
+            this._tbBet = new System.Windows.Forms.MaskedTextBox();
+            this._lblBankroll = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 159);
+            this.label2.Location = new System.Drawing.Point(24, 245);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(0, 13);
+            this.label2.Size = new System.Drawing.Size(0, 20);
             this.label2.TabIndex = 12;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(304, 71);
+            this.label4.Location = new System.Drawing.Point(456, 109);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 13);
+            this.label4.Size = new System.Drawing.Size(0, 20);
             this.label4.TabIndex = 14;
             // 
             // imageList1
@@ -68,101 +69,98 @@
             // splitter1
             // 
             this.splitter1.Location = new System.Drawing.Point(0, 0);
+            this.splitter1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 789);
+            this.splitter1.Size = new System.Drawing.Size(4, 1214);
             this.splitter1.TabIndex = 38;
             this.splitter1.TabStop = false;
             // 
-            // layout
+            // _playerLayoutPanel
             // 
-            this.layout.BackColor = System.Drawing.Color.Transparent;
-            this.layout.Location = new System.Drawing.Point(19, 343);
-            this.layout.Name = "layout";
-            this.layout.Size = new System.Drawing.Size(820, 302);
-            this.layout.TabIndex = 34;
+            this._playerLayoutPanel.BackColor = System.Drawing.Color.Transparent;
+            this._playerLayoutPanel.Location = new System.Drawing.Point(28, 528);
+            this._playerLayoutPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._playerLayoutPanel.Name = "_playerLayoutPanel";
+            this._playerLayoutPanel.Size = new System.Drawing.Size(1230, 477);
+            this._playerLayoutPanel.TabIndex = 34;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Font = new System.Drawing.Font("Wide Latin", 15.85714F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Yellow;
-            this.label6.Location = new System.Drawing.Point(194, 302);
+            this.label6.Location = new System.Drawing.Point(147, 487);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(388, 25);
+            this.label6.Size = new System.Drawing.Size(1111, 46);
             this.label6.TabIndex = 16;
             this.label6.Text = "Dealer hits on 16, stands on soft 17";
             // 
-            // dealerLayoutPanel
+            // _dealerLayoutPanel
             // 
-            this.dealerLayoutPanel.BackColor = System.Drawing.Color.Transparent;
-            this.dealerLayoutPanel.Location = new System.Drawing.Point(310, 12);
-            this.dealerLayoutPanel.Name = "dealerLayoutPanel";
-            this.dealerLayoutPanel.Size = new System.Drawing.Size(496, 287);
-            this.dealerLayoutPanel.TabIndex = 33;
+            this._dealerLayoutPanel.BackColor = System.Drawing.Color.Transparent;
+            this._dealerLayoutPanel.Location = new System.Drawing.Point(465, 18);
+            this._dealerLayoutPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._dealerLayoutPanel.Name = "_dealerLayoutPanel";
+            this._dealerLayoutPanel.Size = new System.Drawing.Size(744, 442);
+            this._dealerLayoutPanel.TabIndex = 33;
             // 
-            // btnBet
+            // _btnBet
             // 
-            this.btnBet.Location = new System.Drawing.Point(335, 651);
-            this.btnBet.Name = "btnBet";
-            this.btnBet.Size = new System.Drawing.Size(131, 23);
-            this.btnBet.TabIndex = 11;
-            this.btnBet.Text = "Bet and Deal!";
-            this.btnBet.UseVisualStyleBackColor = true;
-            this.btnBet.Click += new System.EventHandler(this.btnBet_Click);
+            this._btnBet.Location = new System.Drawing.Point(497, 1030);
+            this._btnBet.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._btnBet.Name = "_btnBet";
+            this._btnBet.Size = new System.Drawing.Size(196, 35);
+            this._btnBet.TabIndex = 11;
+            this._btnBet.Text = "Bet and Deal!";
+            this._btnBet.UseVisualStyleBackColor = true;
+            this._btnBet.Click += new System.EventHandler(this.btnBet_Click);
             // 
-            // label3
+            // _tbBet
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Yellow;
-            this.label3.Location = new System.Drawing.Point(319, 727);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 29);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Bankroll:";
+            this._tbBet.BackColor = System.Drawing.Color.Black;
+            this._tbBet.Font = new System.Drawing.Font("HP Simplified", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._tbBet.ForeColor = System.Drawing.Color.Yellow;
+            this._tbBet.Location = new System.Drawing.Point(540, 1075);
+            this._tbBet.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this._tbBet.Mask = "#####";
+            this._tbBet.Name = "_tbBet";
+            this._tbBet.Size = new System.Drawing.Size(110, 40);
+            this._tbBet.TabIndex = 22;
             // 
-            // tbBet
+            // _lblBankroll
             // 
-            this.tbBet.BackColor = System.Drawing.Color.Black;
-            this.tbBet.Font = new System.Drawing.Font("HP Simplified", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbBet.ForeColor = System.Drawing.Color.Yellow;
-            this.tbBet.Location = new System.Drawing.Point(355, 689);
-            this.tbBet.Mask = "#####";
-            this.tbBet.Name = "tbBet";
-            this.tbBet.Size = new System.Drawing.Size(75, 26);
-            this.tbBet.TabIndex = 22;
-            // 
-            // lblBankroll
-            // 
-            this.lblBankroll.AutoSize = true;
-            this.lblBankroll.BackColor = System.Drawing.Color.Transparent;
-            this.lblBankroll.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBankroll.ForeColor = System.Drawing.Color.Yellow;
-            this.lblBankroll.Location = new System.Drawing.Point(429, 727);
-            this.lblBankroll.Name = "lblBankroll";
-            this.lblBankroll.Size = new System.Drawing.Size(25, 29);
-            this.lblBankroll.TabIndex = 39;
-            this.lblBankroll.Text = "0";
+            this._lblBankroll.AutoSize = true;
+            this._lblBankroll.BackColor = System.Drawing.Color.Transparent;
+            this._lblBankroll.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._lblBankroll.ForeColor = System.Drawing.Color.Yellow;
+            this._lblBankroll.Location = new System.Drawing.Point(577, 1132);
+            this._lblBankroll.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this._lblBankroll.Name = "_lblBankroll";
+            this._lblBankroll.Size = new System.Drawing.Size(43, 51);
+            this._lblBankroll.TabIndex = 39;
+            this._lblBankroll.Text = "0";
             // 
             // BlackJackForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkGreen;
-            this.ClientSize = new System.Drawing.Size(862, 789);
-            this.Controls.Add(this.lblBankroll);
-            this.Controls.Add(this.layout);
-            this.Controls.Add(this.dealerLayoutPanel);
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(1353, 1214);
+            this.Controls.Add(this._lblBankroll);
+            this.Controls.Add(this._playerLayoutPanel);
+            this.Controls.Add(this._dealerLayoutPanel);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.splitter1);
-            this.Controls.Add(this.tbBet);
+            this.Controls.Add(this._tbBet);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.btnBet);
+            this.Controls.Add(this._btnBet);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "BlackJackForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -177,13 +175,12 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.FlowLayoutPanel layout;
+        private System.Windows.Forms.FlowLayoutPanel _playerLayoutPanel;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.FlowLayoutPanel dealerLayoutPanel;
-        private System.Windows.Forms.Button btnBet;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.MaskedTextBox tbBet;
-        private System.Windows.Forms.Label lblBankroll;
+        private System.Windows.Forms.FlowLayoutPanel _dealerLayoutPanel;
+        private System.Windows.Forms.Button _btnBet;
+        private System.Windows.Forms.MaskedTextBox _tbBet;
+        private System.Windows.Forms.Label _lblBankroll;
     }
 }
 

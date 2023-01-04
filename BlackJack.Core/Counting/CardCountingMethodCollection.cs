@@ -1,41 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Blackjack.Core;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
+﻿using System.ComponentModel;
+using Blackjack.Core.Entities;
 
 
 namespace Blackjack.Core.Counting
 {
     public class CardCountingMethodCollection
     {
-        private readonly BindingList<BaseCardCountingStrategy> cardCountingStrategyBindingList;
-        private readonly GameController controller;
+        private readonly BindingList<BaseCardCountingStrategy> _cardCountingStrategyBindingList;
+        private readonly GameController _controller;
 
         public CardCountingMethodCollection(GameController controller)
         {
-            this.cardCountingStrategyBindingList = new BindingList<BaseCardCountingStrategy>();
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiLo, controller.Shoe));
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiOp1, controller.Shoe));
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiOpt2, controller.Shoe));
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.KO, controller.Shoe));
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.Omega3, controller.Shoe));
-            cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.ZenCount, controller.Shoe));
-            this.controller = controller;
+            this._cardCountingStrategyBindingList = new BindingList<BaseCardCountingStrategy>();
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiLo, controller.Shoe));
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiOp1, controller.Shoe));
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.HiOpt2, controller.Shoe));
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.Ko, controller.Shoe));
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.Omega3, controller.Shoe));
+            _cardCountingStrategyBindingList.Add(CardCountingMethodFactory.GetStrategy(CardCountingStrategy.ZenCount, controller.Shoe));
+            this._controller = controller;
             //this.controller.onCardReceived += controller_onCardReceived;
         }
 
-        void controller_onCardReceived(object sender, OnCardReceivedEventArgs args)
+        private void controller_onCardReceived(object sender, OnCardReceivedEventArgs args)
         {
-            foreach (var item in cardCountingStrategyBindingList)
+            foreach (var item in _cardCountingStrategyBindingList)
             {
                 item.CurrentCount += item.GetValueForCard(args.Card);
             }
@@ -43,7 +32,7 @@ namespace Blackjack.Core.Counting
 
         public BindingList<BaseCardCountingStrategy> CardCountingStrategyBindingList
         {
-            get { return this.cardCountingStrategyBindingList; }
+            get { return this._cardCountingStrategyBindingList; }
         }
     }
 }

@@ -1,40 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Blackjack.Core
+namespace Blackjack.Core.Entities
 {
     public sealed class Shoe
     {
-        private readonly List<Deck> deckList;
+        private readonly List<Deck> _deckList;
         
         public Shoe(int numberOfDecks)
         {
-            deckList = new List<Deck>(numberOfDecks);
-            while (deckList.Count < numberOfDecks)
+            _deckList = new List<Deck>(numberOfDecks);
+            while (_deckList.Count < numberOfDecks)
             {
                 var deck = new Deck();
                
-                deckList.Add(deck);
+                _deckList.Add(deck);
             }
         }
 
-        public IList<Deck> DeckList
-        {
-            get
-            { 
-                return deckList;  
-            }
-        }
+        public IList<Deck> DeckList => _deckList;
 
-      
-        private Card getCard(CardType type)
+        private Card GetCard(CardType type)
         {
             Card topCard = null;
             bool isFound = false;
-            foreach (var deck in deckList)
+            foreach (var deck in _deckList)
             {
                 if (isFound)
                     break;
@@ -57,24 +47,24 @@ namespace Blackjack.Core
 
         public Card GetALow()
         {
-            return getCard(CardType.Numeric);
+            return GetCard(CardType.Numeric);
         }
 
         public Card GetAnAce()
         {
-            return getCard(CardType.Ace);
+            return GetCard(CardType.Ace);
         }
 
         public Card GetAFace()
         {
-            return getCard(CardType.Jack);
+            return GetCard(CardType.Jack);
         }
 
         public Card SplitTester(Card prevCard)
         {
             Card topCard = null;
             bool isFound = false;
-            foreach (var deck in deckList)
+            foreach (Deck deck in _deckList)
             {
                 if (isFound)
                     break;
@@ -89,12 +79,10 @@ namespace Blackjack.Core
                     }
                 }
             }
-
             if (topCard == null)
                 throw new ArgumentNullException("the card is null", "the card is null");
             return topCard;
         }
-
 
         public Card NextCard
         {
@@ -102,9 +90,7 @@ namespace Blackjack.Core
             {
                 Card topCard = null;
                 bool isFound = false;
-           
-           
-                foreach (var deck in deckList)
+                foreach (Deck deck in _deckList)
                 {
                     if (isFound)
                         break;
@@ -130,8 +116,8 @@ namespace Blackjack.Core
         {
             get
             {
-                var list = new List<Card>();
-                this.deckList.ForEach(i => i.CardList.ForEach(card => { if(card.IsDealt) list.Add(card); }));
+                List<Card> list = new List<Card>();
+                this._deckList.ForEach(i => i.CardList.ForEach(card => { if(card.IsDealt) list.Add(card); }));
                 return list;
             }
         }
@@ -140,8 +126,8 @@ namespace Blackjack.Core
         {
             get
             {
-                var list = new List<Card>();
-                this.deckList.ForEach(i => i.CardList.ForEach(card => { if (!card.IsDealt) list.Add(card); }));
+                List<Card> list = new List<Card>();
+                this._deckList.ForEach(i => i.CardList.ForEach(card => { if (!card.IsDealt) list.Add(card); }));
                 return list;
             }
         }

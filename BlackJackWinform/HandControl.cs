@@ -2,29 +2,24 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Blackjack.Core;
+using Blackjack.Core.Entities;
 
 namespace BlackJackWinform
 {
     public partial class HandControl : UserControl
     {
-        protected readonly List<PictureBox> pictureBoxList;
+        protected readonly List<PictureBox> PictureBoxList;
         protected readonly GameController Controller;
         protected readonly BlackJackForm BlackJackForm;
 
-        private readonly GameController controller;
-        protected readonly Hand hand;
-        public HandControl(Hand hand, GameController controller, BlackJackForm blackjackForm)
+        //protected readonly Hand Hand;
+        public HandControl(GameController controller, BlackJackForm blackjackForm)
         {
             InitializeComponent();
- 
-            this.pictureBoxList = new List<PictureBox>();
-            this.Controller = controller;
-            this.BlackJackForm = blackjackForm;
-
-            this.hand = hand;
-
-      
-
+            PictureBoxList = new List<PictureBox>();
+            Controller = controller;
+            BlackJackForm = blackjackForm;
+            //Hand = hand;
             btnDoubleDown.Enabled = true;
             btnSplit.Enabled = false;
             btnHit.Enabled = true;
@@ -33,23 +28,19 @@ namespace BlackJackWinform
 
         public void AddCard(Card card, bool isFaceUp)
         {
-            var pictureBox = new PictureBox();
-            //pictureBox.Height = 106;
-            //pictureBox.Width = 72;
-
+            PictureBox pictureBox = new PictureBox();
             pictureBox.Height = 138;
             pictureBox.Width = 94;
-
             Point p = new Point();
-            if (pictureBoxList.Count > 0)
+            if (PictureBoxList.Count > 0)
             {
-                p.X = pictureBoxList[pictureBoxList.Count - 1].Location.X + 18;
-                p.Y = pictureBoxList[pictureBoxList.Count - 1].Location.Y + 18;
+                p.X = PictureBoxList[PictureBoxList.Count - 1].Location.X + 18;
+                p.Y = PictureBoxList[PictureBoxList.Count - 1].Location.Y + 18;
             }
 
             pictureBox.Location = p;
             pictureBox.Tag = card;
-            pictureBoxList.Add(pictureBox);
+            PictureBoxList.Add(pictureBox);
             pnlHand.Controls.Add(pictureBox);
             pictureBox.BringToFront();
             var image = isFaceUp ? ImageHelper.GetFaceImageForCard(card) : ImageHelper.GetBackImage();
@@ -75,54 +66,8 @@ namespace BlackJackWinform
 
         public void EndGame()
         {
-            this.pictureBoxList.Clear();
+            this.PictureBoxList.Clear();
             pnlHand.Controls.Clear();
-        }
-
-        private void btnHit_Click(object sender, System.EventArgs e)
-        {
-            ((PlayerHand)hand).Hit();
-            
-//            Controller.Hit((PlayerHand)hand);
-        }
-
-        private void btnStand_Click(object sender, System.EventArgs e)
-        {
-            //Controller.Stand((PlayerHand)hand);
-
-            ((PlayerHand)hand).Stand();
-
-            disableButtons();
-
-        }
-
-        private void disableButtons()
-        {
-            btnDoubleDown.Enabled = false;
-            btnSplit.Enabled = false;
-            btnHit.Enabled = false;
-            btnStand.Enabled = false;
-        }
-
-        private void btnSplit_Click(object sender, System.EventArgs e)
-        {
-            ((BlackJackForm)this.ParentForm).SplitHand((PlayerHandControl)this);
-        }
-
-        private void btnDoubleDown_Click(object sender, System.EventArgs e)
-        {
-            //Controller.DoubleDown((PlayerHand)hand);
-
-            ((PlayerHand)hand).DoubleDown();
-
-            disableButtons();
-
-            //if the double down results in the bust, bust
-            //if the double down does not bust, finishHand
-            
-            //if the hit results in a bust, finishedHand
-            //if the hit does not result in the bust, doNotFinishHand
-
         }
     }
 }

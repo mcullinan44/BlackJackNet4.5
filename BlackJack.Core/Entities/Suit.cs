@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Blackjack.Core
+﻿namespace Blackjack.Core.Entities
 {
     public enum Suit
     {
         Hearts = 1,
         Diamonds,
         Clubs,
-        Spades,
-        None
+        Spades
     }
 
     public enum CardType

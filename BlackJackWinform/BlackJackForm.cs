@@ -4,19 +4,18 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Blackjack.Core;
 using Blackjack.Core.Counting;
+using Blackjack.Core.Entities;
 using Blackjack.Core.ShoeData;
 
 namespace BlackJackWinform
 {
     public partial class BlackJackForm : Form
     {
-        private List<PlayerHandControl> playerHandControlList = new List<PlayerHandControl>();
-        private DealerHandControl dealerHandControl;
-        private readonly GameController controller;
-        private readonly BindingList<ShoeRemaining> shoeRemainingBindingList;
-        private readonly BindingSource shoeRemainingBindingSource;
-        private readonly BindingList<BaseCardCountingStrategy> cardCountingStrategyBindingList;
-        private readonly BindingSource cardCountingStrategyBindingSource;
+        private readonly List<PlayerHandControl> _playerHandControlList = new List<PlayerHandControl>();
+        private DealerHandControl _dealerHandControl;
+        private readonly GameController _controller;
+        private readonly BindingSource _shoeRemainingBindingSource;
+        private readonly BindingSource _cardCountingStrategyBindingSource;
         /*
          * 
          * KNOWN BUGS
@@ -27,38 +26,29 @@ namespace BlackJackWinform
         public BlackJackForm()
         {
             InitializeComponent();
-            this.controller = new GameController(6, 10);
+            _controller = new GameController(6);
+            _controller.OnBankrollChange += Instance_OnBankrollChange;
+            _controller.OnShowAllCards += Instance_OnShowAllCards;
+            _controller.OnGameEnd += controller_onGameEnd;
+            _controller.MinimumBet = Defaults.MINIMUM_BET;
+            _controller.NumberOfDecks = Defaults.NUMBER_OF_DECKS;
+            _controller.AddPlayer("Player 1", Defaults.BANKROLL);
+            _controller.ShuffleAll();
 
-
-            controller.onBankrollChange += Instance_OnBankrollChange;
-            controller.onShowAllCards += Instance_OnShowAllCards;
-            controller.onGameEnd += controller_onGameEnd;
-            controller.MinimumBet = Defaults.MinimumBet;
-            controller.NumberOfDecks = Defaults.NumberOfDecks;
-
-
-            controller.AddPlayer("matt", Defaults.Bankroll);
-            controller.ShuffleAll();
-
-
-            var collection = new ShoeRemainingCollection(controller);
+            ShoeRemainingCollection collection = new ShoeRemainingCollection(_controller);
+            
             collection.ShoeRemainingBindingList.ListChanged += ShoeRemainingBindingList_ListChanged;
-            tbBet.Text = controller.MinimumBet.ToString("c0");
-            lblBankroll.Text = controller.PlayerList[0].PlayerbankRoll.ToString("c0");
-
-
-            this.shoeRemainingBindingSource = new BindingSource();
-            this.shoeRemainingBindingSource.DataSource = collection.ShoeRemainingBindingList;
-           // this.dgvShoeRemaining.DataSource = this.shoeRemainingBindingSource;
-
-            var countStrategyCollection = new CardCountingMethodCollection(controller);
-            this.cardCountingStrategyBindingSource = new BindingSource();
-            this.cardCountingStrategyBindingSource.DataSource = countStrategyCollection.CardCountingStrategyBindingList;
-            //this.dgvCountingScenarios.DataSource = this.cardCountingStrategyBindingSource;
-            //pnlAction.Visible = false;
+            _tbBet.Text = _controller.MinimumBet.ToString("c0");
+            _lblBankroll.Text = _controller.PlayerList[0].PlayerbankRoll.ToString("c0");
+            _shoeRemainingBindingSource = new BindingSource();
+            _shoeRemainingBindingSource.DataSource = collection.ShoeRemainingBindingList;
+            CardCountingMethodCollection countStrategyCollection = new CardCountingMethodCollection(_controller);
+            _cardCountingStrategyBindingSource = new BindingSource();
+            _cardCountingStrategyBindingSource.DataSource = countStrategyCollection.CardCountingStrategyBindingList;
         }
 
-        void ShoeRemainingBindingList_ListChanged(object sender, ListChangedEventArgs e)
+        
+        private void ShoeRemainingBindingList_ListChanged(object sender, ListChangedEventArgs e)
         {
          
 
@@ -67,179 +57,67 @@ namespace BlackJackWinform
 
         #region User Events
 
-        private void btnHit_Click(object sender, EventArgs e)
-        {
-            
-            
-
-            
-        }
-
-        private void btnStand_Click(object sender, EventArgs e)
-        {
-           
-        }
-
-
-        private PlayerHandControl ActivePlayerHandControl
-        {
-            get
-            {
-                return playerHandControlList.Find(i => i.PlayerHand == controller.ActivePlayer.ActiveHand);
-            }
-
-        }
-
-        private void btnDoubleDown_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            btnBet.Enabled = true;
-            tbBet.Enabled = true;
-        }
-
         private void btnBet_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("--------------------------------------");
-            btnBet.Enabled = false;
-     
-            if (controller.Shoe.UndealtCards.Count < 10)
-                controller.ShuffleAll();
-
-            controller.StartNewHand();
-
-
-
-            dealerLayoutPanel.Controls.Clear();
-            dealerHandControl = new DealerHandControl(controller.Dealer.Hand, controller, this);
-
-
-            controller.Dealer.Hand.onDealerBlackjack += controller_onGameEnd;
-            controller.Dealer.Hand.onDealerBlackjack += Instance_OnShowAllCards;
-            controller.Dealer.Hand.onDealerBust += controller_onGameEnd;
-            controller.Dealer.Hand.onDealerBust += Instance_OnShowAllCards;
-
-
-            dealerLayoutPanel.Controls.Add(dealerHandControl);
-            foreach(var control in playerHandControlList)
-            {
-                control.EndGame();
-            }
-            layout.Controls.Clear();
-
-
-            controller.IncreaseBet(controller.ActivePlayer.ActiveHand, double.Parse(tbBet.Text));
-
-            var playerHandControl = new PlayerHandControl(controller.ActivePlayer.ActiveHand, controller,this);
-
-
-
-            playerHandControlList.Add(playerHandControl);
-            layout.Controls.Add(playerHandControl);
+            _btnBet.Enabled = false;
+            _playerLayoutPanel.Controls.Clear();
+            if (_controller.Shoe.UndealtCards.Count < 10)
+                _controller.ShuffleAll();
+            _controller.ResetBoard();
+            _dealerLayoutPanel.Controls.Clear();
+            _dealerHandControl = new DealerHandControl(_controller, this);
+            _controller.Dealer.Hand.OnDealerBlackjack += controller_onGameEnd;
+            _controller.Dealer.Hand.OnDealerBlackjack += Instance_OnShowAllCards;
+            _controller.Dealer.Hand.OnDealerBust += controller_onGameEnd;
+            _controller.Dealer.Hand.OnDealerBust += Instance_OnShowAllCards;
+            _dealerLayoutPanel.Controls.Add(_dealerHandControl);
+            PlayerHandControl playerHandControl = new PlayerHandControl(_controller.ActivePlayer, _controller,this, State.Playing);
+            _playerHandControlList.Add(playerHandControl);
+            _playerLayoutPanel.Controls.Add(playerHandControl);
             playerHandControl.btnDoubleDown.Enabled = true;
             playerHandControl.btnHit.Enabled = true;
             playerHandControl.btnStand.Enabled = true;
-            
-            controller.Deal();
-   
-           // pnlAction.Visible = true;
+            _controller.IncreaseBet(_controller.ActivePlayer.ActiveHand, double.Parse(_tbBet.Text));
+            //-----------------------
+            _controller.Deal();     //
+            //-----------------------
         }
 
-        private void Hand_onDealerBlackjack(object sender, OnCardReceivedEventArgs args)
+        public void SplitHand()
         {
-            
-        }
-
-        public void SplitHand(PlayerHandControl sourceHandControl)
-        {
-
-            //take a card from the source hand
-            Card cardToMoveToNewHand = sourceHandControl.TakeLastCard();
-            //create a new hand for the active player
-            PlayerHand newHand = controller.AddHandToPlayer(controller.ActivePlayer, State.NotYetPlayed);
-            newHand.State = State.NotYetPlayed;
-
-
-            //add the card that was removed from the source to the new hand
-            var newPlayerHandControl = new PlayerHandControl(newHand, controller, this);
-            controller.GivePlayerACard(newHand, cardToMoveToNewHand);
+            PlayerHandControl newPlayerHandControl = new PlayerHandControl(_controller.ActivePlayer, _controller, this, State.NotYetPlayed);
+            _playerHandControlList.Add(newPlayerHandControl);
             newPlayerHandControl.Visible = true;
-            playerHandControlList.Add(newPlayerHandControl);
-            layout.Controls.Add(newPlayerHandControl);
-
-
-            controller.IncreaseBet(newHand, double.Parse(tbBet.Text));
-
-
-
+            _playerLayoutPanel.Controls.Add(newPlayerHandControl);
+            _controller.SeedSplitHandWithNewCard(newPlayerHandControl.PlayerHand);
+            _controller.IncreaseBet(newPlayerHandControl.PlayerHand, double.Parse(_tbBet.Text));
             newPlayerHandControl.DeactivateButtons();
-
-            controller.GivePlayerNextCardInShoe(controller.ActivePlayer.ActiveHand, true);
-
-            controller.GivePlayerNextCardInShoe(newHand, true);
-
+            //add another card to first hand
+            _controller.GivePlayerNextCardInShoe(_controller.ActivePlayer.ActiveHand, true);
+            //add another card to last hand
+            _controller.GivePlayerNextCardInShoe(newPlayerHandControl.PlayerHand, true);
         }
-
-
-
-        void ActiveHand_onBust(object sender, OnCardReceivedEventArgs args)
-        {
-            var newHand = playerHandControlList.Find(i => i.PlayerHand == controller.ActivePlayer.ActiveHand);
-            if (newHand != null)
-            {
-                newHand.IsPlaying = true;
-            }
-        }
-
-        //void controller_OnActiveHandChanged(object sender, EventArgs e)
-        //{
-        //    if (controller.ActivePlayer.ActiveHand.Cards.Count == 2)
-        //    {
-        //        if (controller.ActivePlayer.ActiveHand.Cards[0].CardType == controller.ActivePlayer.ActiveHand.Cards[1].CardType
-        //            && controller.ActivePlayer.ActiveHand.Cards[0].Value == controller.ActivePlayer.ActiveHand.Cards[1].Value)
-        //        {
-        //            btnSplit.Enabled = true;
-        //        }
-
-        //        btnDoubleDown.Enabled = true;
-        //        btnSplit.Enabled = false;
-        //    }
-        //    else
-        //    {
-        //        btnDoubleDown.Enabled = false;
-        //        btnSplit.Enabled = false;
-        //    }
-        //    var activeHand = (PlayerHand)controller.ActivePlayer.ActiveHand;
-        //    btnDoubleDown.Enabled = true;
-        //    var activeControl = playerHandControlList.Find(i => i.Hand.IsActive);
-        //    activeControl.IsActive = true;
-        //}
 
         #endregion
 
         #region Game Events
 
-        void controller_onGameEnd(object sender, EventArgs e)
+        private void controller_onGameEnd(object sender, EventArgs e)
         {
-            tbBet.Enabled = true;
-            btnBet.Enabled = true;
-            btnBet.Visible = true;
-
+            _tbBet.Enabled = true;
+            _btnBet.Enabled = true;
+            _btnBet.Visible = true;
 
         }
 
-
-        void Instance_OnShowAllCards(object sender, EventArgs e)
+        private void Instance_OnShowAllCards(object sender, EventArgs e)
         {
-            dealerHandControl.ShowAllCards();
+            _dealerHandControl.ShowAllCards();
         }
 
-        void Instance_OnBankrollChange(object sender, OnBankrollChangedEventArgs e)
+        private void Instance_OnBankrollChange(object sender, OnBankrollChangedEventArgs e)
         {
-            lblBankroll.Text = e.Player.PlayerbankRoll.ToString("c0");
+            _lblBankroll.Text = e.Player.PlayerbankRoll.ToString("c0");
         }
 
         #endregion

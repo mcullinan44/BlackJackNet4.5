@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Blackjack.Core.Entities;
 
 namespace Blackjack.Core.Counting
 {
@@ -10,10 +6,8 @@ namespace Blackjack.Core.Counting
     {
         public HighOpt1(Shoe shoe) : base(shoe) { }
 
-        public override string StrategyName
-        {
-            get { return "High-Opt1"; }
-        }
+        public override string StrategyName => "High-Opt1";
+
         public override int GetValueForCard(Card card)
         {
             int value = 0;

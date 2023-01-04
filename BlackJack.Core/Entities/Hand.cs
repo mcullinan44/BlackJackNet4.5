@@ -1,37 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Blackjack.Core
+namespace Blackjack.Core.Entities
 {
     public abstract class Hand
     {
-        protected GameController controller;
+        protected GameController Controller;
 
-        public Hand(GameController controller)
+        protected Hand(GameController controller)
         {
             Cards = new List<Card>();
             Result = new Result();
-            
-        
-
-            this.controller = controller;
+            Controller = controller;
         }
-
-
 
         public List<Card> Cards { get; }
 
-        public int CardCount
-        {
-            get
-            {
-                return Cards.Count;
-            }
-        }
-
+        public int CardCount => Cards.Count;
+        
        public int CurrentScore
        {
            get
@@ -45,9 +30,9 @@ namespace Blackjack.Core
                 //treat Aces as 1 if current score is over 21
                if(runningTotal > 21)
                {
-                   foreach (var c in Cards)
+                   foreach (Card card in Cards)
                    {
-                       if (c.CardType == CardType.Ace)
+                       if (card.CardType == CardType.Ace)
                        {
                            runningTotal -= 10;
                        }
@@ -63,10 +48,7 @@ namespace Blackjack.Core
        }
 
         public abstract bool CheckIsBust();
-  
- 
-    
-
+        
         public Result Result { get; set; }
     }
 }

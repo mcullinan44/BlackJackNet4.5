@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 
-namespace Blackjack.Core
+namespace Blackjack.Core.Entities
 {
     public class Deck
     {
-        private readonly List<Card> cardList;
-        private Bitmap[,] _cards;
-
+        private readonly List<Card> _cardList;
+        
         public Deck() {
-            cardList = new List<Card>();
-            var suitList = new List<Suit>();
-            suitList.Add(Suit.Clubs);
-            suitList.Add(Suit.Diamonds);
-            suitList.Add(Suit.Hearts);
-            suitList.Add(Suit.Spades);
+            _cardList = new List<Card>();
+            List<Suit> suitList = new List<Suit>
+            {
+                Suit.Clubs,
+                Suit.Diamonds,
+                Suit.Hearts,
+                Suit.Spades
+            };
             foreach (Suit suit in suitList)
             {
                 for (int i = 2; i <= 14; i++)
                 {
-                    int value = 0;
+                    int value;
                     CardType type;
                     if (i <= 10)
                     {
@@ -35,7 +33,7 @@ namespace Blackjack.Core
                         value = i <= 13 ? 10 : 11;
                         type = (i == 11 ? CardType.Jack : i == 12 ? CardType.Queen : i == 13 ? CardType.King : CardType.Ace);
                     }
-                    cardList.Add(new Card(suit, value, type));
+                    _cardList.Add(new Card(suit, value, type));
                 }
             }
         }
@@ -43,21 +41,18 @@ namespace Blackjack.Core
         public void Shuffle()
         {
             Random rand = new Random(DateTime.Now.Millisecond);
-            for(int i = 0; i < cardList.Count; i++)
+            for(int i = 0; i < _cardList.Count; i++)
             {
-                int pos = rand.Next(cardList.Count - 1);
-                Card thisCard = cardList[i];
+                int pos = rand.Next(_cardList.Count - 1);
+                Card thisCard = _cardList[i];
                 thisCard.IsDealt = false;
-                Card replaceCard = cardList[pos];
+                Card replaceCard = _cardList[pos];
                 replaceCard.IsDealt = false;
-                cardList[i] = replaceCard;
-                cardList[pos] = thisCard;
+                _cardList[i] = replaceCard;
+                _cardList[pos] = thisCard;
             }
         }
 
-        public List<Card> CardList
-        {
-            get { return this.cardList;  }
-        }
+        public List<Card> CardList => _cardList;
     }
 }

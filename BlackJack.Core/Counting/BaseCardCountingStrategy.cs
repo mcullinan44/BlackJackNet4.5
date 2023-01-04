@@ -1,38 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Blackjack.Core;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Collections.ObjectModel;
+using Blackjack.Core.Entities;
 
 
 namespace Blackjack.Core.Counting
 {
     public abstract class BaseCardCountingStrategy : INotifyPropertyChanged
     {
-        private readonly Shoe shoe;
+        private readonly Shoe _shoe;
         private int _currentCount;
         public abstract string StrategyName { get; }
-        public BaseCardCountingStrategy(Shoe shoe)
+
+        protected BaseCardCountingStrategy(Shoe shoe)
         {
-            this.shoe = shoe;
+            _shoe = shoe;
         }
 
         public abstract int GetValueForCard(Card card);
 
         public int CurrentCount
         {
-            get
-            {
-                return _currentCount;
-            }
+            get => _currentCount;
             set
             {
                 if (value != this._currentCount)

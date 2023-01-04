@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Blackjack.Core.Entities;
 
 namespace Blackjack.Core.Counting
 {
-    public class OmegaIII : BaseCardCountingStrategy
+    public class OmegaIii : BaseCardCountingStrategy
     {
-        public OmegaIII(Shoe shoe) : base(shoe) { }
+        public OmegaIii(Shoe shoe) : base(shoe) { }
 
-        public override string StrategyName
-        {
-            get { return "Omega III"; }
-        }
+        public override string StrategyName => "Omega III";
+
         public override int GetValueForCard(Card card)
         {
             int value = 0;
